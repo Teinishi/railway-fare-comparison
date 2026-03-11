@@ -1,0 +1,534 @@
+{
+    "companies": {
+        "jrEast": {
+            "name": "JR東日本",
+            "fareTables": {
+                "yamanoteBefore2026": {
+                    "name": "山手線内 (2026年改定前)",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 146, "ticket": 150 },
+                        { "km": 6, "ic": 167, "ticket": 170 },
+                        { "km": 10, "ic": 178, "ticket": 180 },
+                        { "km": 15, "ic": 208, "ticket": 210 },
+                        { "km": 20, "ic": 274, "ticket": 280 },
+                        { "km": 25, "ic": 351, "ticket": 360 },
+                        { "km": 30, "ic": 428, "ticket": 430 },
+                        { "km": 35, "ic": 494, "ticket": 500 }
+                    ]
+                },
+                "tokyoSpecifiedBefore2026": {
+                    "name": "電車特定区間 (2026年改定前)",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 146, "ticket": 150 },
+                        { "km": 6, "ic": 167, "ticket": 170 },
+                        { "km": 10, "ic": 178, "ticket": 180 },
+                        { "km": 15, "ic": 230, "ticket": 230 },
+                        { "km": 20, "ic": 318, "ticket": 320 },
+                        { "km": 25, "ic": 406, "ticket": 410 },
+                        { "km": 30, "ic": 483, "ticket": 490 },
+                        { "km": 35, "ic": 571, "ticket": 580 },
+                        { "km": 40, "ic": 659, "ticket": 660 },
+                        { "km": 45, "ic": 736, "ticket": 740 },
+                        { "km": 50, "ic": 824, "ticket": 830 },
+                        { "km": 60, "ic": 945, "ticket": 950 },
+                        { "km": 70, "ic": 1110, "ticket": 1110 },
+                        { "km": 80, "ic": 1275, "ticket": 1280 },
+                        { "km": 90, "ic": 1451, "ticket": 1460 },
+                        { "km": 100, "ic": 1616, "ticket": 1620 },
+                        { "km": 120, "ic": 1880, "ticket": 1880 },
+                        { "km": 140, "ic": 2210, "ticket": 2210 },
+                        { "km": 160, "ic": 2540, "ticket": 2540 },
+                        { "km": 180, "ic": 2870, "ticket": 2870 },
+                        { "km": 200, "ic": 3200, "ticket": 3200 },
+                        { "km": 220, "ic": 3530, "ticket": 3530 },
+                        { "km": 240, "ic": 3860, "ticket": 3860 },
+                        { "km": 260, "ic": 4190, "ticket": 4190 },
+                        { "km": 280, "ic": 4520, "ticket": 4520 },
+                        { "km": 300, "ic": 4850, "ticket": 4850 },
+                        { "km": 320, "ic": 5180, "ticket": 5180 },
+                        { "km": 340, "ic": 5510, "ticket": 5510 },
+                        { "km": 360, "ic": 5730, "ticket": 5730 },
+                        { "km": 380, "ic": 5950, "ticket": 5950 },
+                        { "km": 400, "ic": 6280, "ticket": 6280 }
+                    ]
+                },
+                "mainLinesBefore2026": {
+                    "name": "幹線 (2026年改定前)",
+                    "fares": [
+                        { "km": 3, "ic": 147, "ticket": 150 },
+                        { "km": 6, "ic": 189, "ticket": 190 },
+                        { "km": 10, "ic": 199, "ticket": 200 },
+                        { "km": 15, "ic": 242, "ticket": 240 },
+                        { "km": 20, "ic": 330, "ticket": 330 },
+                        { "km": 25, "ic": 418, "ticket": 420 },
+                        { "km": 30, "ic": 506, "ticket": 510 },
+                        { "km": 35, "ic": 594, "ticket": 590 },
+                        { "km": 40, "ic": 682, "ticket": 680 },
+                        { "km": 45, "ic": 770, "ticket": 770 },
+                        { "km": 50, "ic": 858, "ticket": 860 },
+                        { "km": 60, "ic": 990, "ticket": 990 },
+                        { "km": 70, "ic": 1166, "ticket": 1170 },
+                        { "km": 80, "ic": 1342, "ticket": 1340 },
+                        { "km": 90, "ic": 1518, "ticket": 1520 },
+                        { "km": 100, "ic": 1694, "ticket": 1690 },
+                        { "km": 120, "ic": 1980, "ticket": 1980 },
+                        { "km": 140, "ic": 2310, "ticket": 2310 },
+                        { "km": 160, "ic": 2640, "ticket": 2640 },
+                        { "km": 180, "ic": 3080, "ticket": 3080 },
+                        { "km": 200, "ic": 3410, "ticket": 3410 },
+                        { "km": 220, "ic": 3740, "ticket": 3740 },
+                        { "km": 240, "ic": 4070, "ticket": 4070 },
+                        { "km": 260, "ic": 4510, "ticket": 4510 },
+                        { "km": 280, "ic": 4840, "ticket": 4840 },
+                        { "km": 300, "ic": 5170, "ticket": 5170 },
+                        { "km": 320, "ic": 5500, "ticket": 5500 },
+                        { "km": 340, "ic": 5720, "ticket": 5720 },
+                        { "km": 360, "ic": 6050, "ticket": 6050 },
+                        { "km": 380, "ic": 6380, "ticket": 6380 },
+                        { "km": 400, "ic": 6600, "ticket": 6600 },
+                        { "km": 420, "ic": 6930, "ticket": 6930 },
+                        { "km": 440, "ic": 7150, "ticket": 7150 },
+                        { "km": 460, "ic": 7480, "ticket": 7480 },
+                        { "km": 480, "ic": 7700, "ticket": 7700 },
+                        { "km": 500, "ic": 8030, "ticket": 8030 },
+                        { "km": 520, "ic": 8360, "ticket": 8360 },
+                        { "km": 540, "ic": 8580, "ticket": 8580 },
+                        { "km": 560, "ticket": 8910 },
+                        { "km": 580, "ticket": 9130 },
+                        { "km": 600, "ticket": 9460 },
+                        { "km": 640, "ticket": 9790 },
+                        { "km": 680, "ticket": 10010 },
+                        { "km": 720, "ticket": 10340 },
+                        { "km": 760, "ticket": 10670 },
+                        { "km": 800, "ticket": 11000 },
+                        { "km": 840, "ticket": 11330 },
+                        { "km": 880, "ticket": 11550 },
+                        { "km": 920, "ticket": 11880 },
+                        { "km": 960, "ticket": 12210 },
+                        { "km": 1000, "ticket": 12540 }
+                    ]
+                },
+                "mainLinesAfter2026": {
+                    "name": "幹線 (2026年改定後)",
+                    "fares": [
+                        { "km": 3, "ic": 155, "ticket": 160 },
+                        { "km": 6, "ic": 199, "ticket": 200 },
+                        { "km": 10, "ic": 209, "ticket": 210 },
+                        { "km": 15, "ic": 253, "ticket": 260 },
+                        { "km": 20, "ic": 341, "ticket": 350 },
+                        { "km": 25, "ic": 440, "ticket": 440 },
+                        { "km": 30, "ic": 528, "ticket": 530 },
+                        { "km": 35, "ic": 616, "ticket": 620 },
+                        { "km": 40, "ic": 715, "ticket": 720 },
+                        { "km": 45, "ic": 803, "ticket": 810 },
+                        { "km": 50, "ic": 902, "ticket": 910 },
+                        { "km": 60, "ic": 1034, "ticket": 1040 },
+                        { "km": 70, "ic": 1221, "ticket": 1230 },
+                        { "km": 80, "ic": 1408, "ticket": 1410 },
+                        { "km": 90, "ic": 1595, "ticket": 1600 },
+                        { "km": 100, "ic": 1782, "ticket": 1790 },
+                        { "km": 120, "ic": 2090, "ticket": 2090 },
+                        { "km": 140, "ic": 2420, "ticket": 2420 },
+                        { "km": 160, "ic": 2750, "ticket": 2750 },
+                        { "km": 180, "ic": 3190, "ticket": 3190 },
+                        { "km": 200, "ic": 3520, "ticket": 3520 },
+                        { "km": 220, "ic": 3850, "ticket": 3850 },
+                        { "km": 240, "ic": 4180, "ticket": 4180 },
+                        { "km": 260, "ic": 4620, "ticket": 4620 },
+                        { "km": 280, "ic": 5060, "ticket": 5060 },
+                        { "km": 300, "ic": 5390, "ticket": 5390 },
+                        { "km": 320, "ic": 5720, "ticket": 5720 },
+                        { "km": 340, "ic": 5940, "ticket": 5940 },
+                        { "km": 360, "ic": 6270, "ticket": 6270 },
+                        { "km": 380, "ic": 6600, "ticket": 6600 },
+                        { "km": 400, "ic": 6930, "ticket": 6930 },
+                        { "km": 420, "ic": 7260, "ticket": 7260 },
+                        { "km": 440, "ic": 7480, "ticket": 7480 },
+                        { "km": 460, "ic": 7810, "ticket": 7810 },
+                        { "km": 480, "ic": 8030, "ticket": 8030 },
+                        { "km": 500, "ic": 8360, "ticket": 8360 },
+                        { "km": 520, "ic": 8690, "ticket": 8690 },
+                        { "km": 540, "ic": 9020, "ticket": 9020 },
+                        { "km": 560, "ticket": 9350 },
+                        { "km": 580, "ticket": 9570 },
+                        { "km": 600, "ticket": 9900 },
+                        { "km": 640, "ticket": 10230 },
+                        { "km": 680, "ticket": 10450 },
+                        { "km": 720, "ticket": 10780 },
+                        { "km": 760, "ticket": 11110 },
+                        { "km": 800, "ticket": 11440 },
+                        { "km": 840, "ticket": 11770 },
+                        { "km": 880, "ticket": 11990 },
+                        { "km": 920, "ticket": 12320 },
+                        { "km": 960, "ticket": 12650 },
+                        { "km": 1000, "ticket": 12980 }
+                    ]
+                },
+                "regionalLinesBefore2026": {
+                    "name": "地方交通線 (2026年改定前)",
+                    "fares": [
+                        { "km": 3, "ic": 147, "ticket": 150 },
+                        { "km": 6, "ic": 189, "ticket": 190 },
+                        { "km": 10, "ic": 210, "ticket": 210 },
+                        { "km": 15, "ic": 242, "ticket": 240 },
+                        { "km": 20, "ic": 330, "ticket": 330 },
+                        { "km": 23, "ic": 418, "ticket": 420 },
+                        { "km": 28, "ic": 506, "ticket": 510 },
+                        { "km": 32, "ic": 594, "ticket": 590 },
+                        { "km": 37, "ic": 682, "ticket": 680 },
+                        { "km": 41, "ic": 770, "ticket": 770 },
+                        { "km": 46, "ic": 858, "ticket": 860 },
+                        { "km": 55, "ic": 990, "ticket": 990 },
+                        { "km": 64, "ic": 1166, "ticket": 1170 },
+                        { "km": 73, "ic": 1342, "ticket": 1340 },
+                        { "km": 82, "ic": 1518, "ticket": 1520 },
+                        { "km": 91, "ic": 1694, "ticket": 1690 },
+                        { "km": 100, "ic": 1881, "ticket": 1880 },
+                        { "km": 110, "ic": 1980, "ticket": 1980 },
+                        { "km": 128, "ic": 2310, "ticket": 2310 },
+                        { "km": 146, "ic": 2640, "ticket": 2640 },
+                        { "km": 164, "ic": 3080, "ticket": 3080 },
+                        { "km": 182, "ic": 3410, "ticket": 3410 },
+                        { "km": 200, "ic": 3740, "ticket": 3740 }
+                    ]
+                },
+                "regionalLinesAfter2026": {
+                    "name": "地方交通線 (2026年改定後)",
+                    "fares": [
+                        { "km": 3, "ic": 155, "ticket": 160 },
+                        { "km": 6, "ic": 199, "ticket": 200 },
+                        { "km": 10, "ic": 220, "ticket": 220 },
+                        { "km": 15, "ic": 253, "ticket": 260 },
+                        { "km": 20, "ic": 341, "ticket": 350 },
+                        { "km": 23, "ic": 440, "ticket": 440 },
+                        { "km": 28, "ic": 528, "ticket": 530 },
+                        { "km": 32, "ic": 616, "ticket": 620 },
+                        { "km": 37, "ic": 715, "ticket": 720 },
+                        { "km": 41, "ic": 803, "ticket": 810 },
+                        { "km": 46, "ic": 902, "ticket": 910 },
+                        { "km": 55, "ic": 1034, "ticket": 1040 },
+                        { "km": 64, "ic": 1221, "ticket": 1230 },
+                        { "km": 73, "ic": 1408, "ticket": 1410 },
+                        { "km": 82, "ic": 1595, "ticket": 1600 },
+                        { "km": 91, "ic": 1782, "ticket": 1790 },
+                        { "km": 100, "ic": 1980, "ticket": 1980 },
+                        { "km": 110, "ic": 2090, "ticket": 2090 },
+                        { "km": 128, "ic": 2420, "ticket": 2420 },
+                        { "km": 146, "ic": 2750, "ticket": 2750 },
+                        { "km": 164, "ic": 3190, "ticket": 3190 },
+                        { "km": 182, "ic": 3520, "ticket": 3520 },
+                        { "km": 200, "ic": 3850, "ticket": 3850 }
+                    ]
+                }
+            }
+        },
+        "tobu": {
+            "name": "東武鉄道",
+            "fareTables": {
+                "tobuLines": {
+                    "name": "各線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 4, "ic": 157, "ticket": 160 },
+                        { "km": 7, "ic": 178, "ticket": 180 },
+                        { "km": 10, "ic": 209, "ticket": 210 },
+                        { "km": 15, "ic": 261, "ticket": 270 },
+                        { "km": 20, "ic": 324, "ticket": 330 },
+                        { "km": 25, "ic": 377, "ticket": 380 },
+                        { "km": 30, "ic": 429, "ticket": 430 },
+                        { "km": 35, "ic": 481, "ticket": 490 },
+                        { "km": 40, "ic": 534, "ticket": 540 },
+                        { "km": 45, "ic": 607, "ticket": 610 },
+                        { "km": 50, "ic": 670, "ticket": 670 },
+                        { "km": 60, "ic": 743, "ticket": 750 },
+                        { "km": 70, "ic": 827, "ticket": 830 },
+                        { "km": 80, "ic": 912, "ticket": 920 },
+                        { "km": 90, "ic": 995, "ticket": 1000 },
+                        { "km": 100, "ic": 1089, "ticket": 1090 },
+                        { "km": 120, "ic": 1225, "ticket": 1230 },
+                        { "km": 140, "ic": 1393, "ticket": 1400 },
+                        { "km": 178, "ic": 1581, "ticket": 1590 }
+                    ]
+                }
+            }
+        },
+        "seibu": {
+            "name": "西武鉄道",
+            "fareTables": {
+                "seibuLines": {
+                    "name": "各線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 4, "ic": 157, "ticket": 160 },
+                        { "km": 8, "ic": 188, "ticket": 180 },
+                        { "km": 12, "ic": 220, "ticket": 220 },
+                        { "km": 16, "ic": 252, "ticket": 260 },
+                        { "km": 20, "ic": 282, "ticket": 290 },
+                        { "km": 24, "ic": 314, "ticket": 320 },
+                        { "km": 28, "ic": 356, "ticket": 360 },
+                        { "km": 32, "ic": 387, "ticket": 390 },
+                        { "km": 36, "ic": 419, "ticket": 420 },
+                        { "km": 40, "ic": 450, "ticket": 450 },
+                        { "km": 44, "ic": 481, "ticket": 490 },
+                        { "km": 48, "ic": 513, "ticket": 520 },
+                        { "km": 52, "ic": 544, "ticket": 550 },
+                        { "km": 56, "ic": 576, "ticket": 580 },
+                        { "km": 60, "ic": 618, "ticket": 620 },
+                        { "km": 64, "ic": 649, "ticket": 650 },
+                        { "km": 68, "ic": 692, "ticket": 700 },
+                        { "km": 72, "ic": 722, "ticket": 730 },
+                        { "km": 76, "ic": 764, "ticket": 770 },
+                        { "km": 81, "ic": 796, "ticket": 800 }
+                    ]
+                }
+            }
+        },
+        "keisei": {
+            "name": "京成電鉄",
+            "description": "成田空港周辺に加算運賃の設定あり\n千原線周辺に乗継運賃の設定あり\n特定区間運賃の設定あり",
+            "fareTables": {
+                "keiseiLines": {
+                    "name": "京成本線、東成田線、押上線、金町線、千葉線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 146, "ticket": 150 },
+                        { "km": 5, "ic": 167, "ticket": 170 },
+                        { "km": 10, "ic": 199, "ticket": 200 },
+                        { "km": 15, "ic": 272, "ticket": 280 },
+                        { "km": 20, "ic": 335, "ticket": 340 },
+                        { "km": 25, "ic": 387, "ticket": 390 },
+                        { "km": 30, "ic": 450, "ticket": 450 },
+                        { "km": 35, "ic": 502, "ticket": 510 },
+                        { "km": 40, "ic": 555, "ticket": 560 },
+                        { "km": 45, "ic": 618, "ticket": 620 },
+                        { "km": 50, "ic": 681, "ticket": 690 },
+                        { "km": 55, "ic": 743, "ticket": 750 },
+                        { "km": 60, "ic": 796, "ticket": 800 },
+                        { "km": 65, "ic": 859, "ticket": 860 },
+                        { "km": 70, "ic": 912, "ticket": 920 }
+                    ]
+                },
+                "chihara": {
+                    "name": "千原線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 199, "ticket": 200 },
+                        { "km": 5, "ic": 261, "ticket": 270 },
+                        { "km": 6, "ic": 282, "ticket": 290 },
+                        { "km": 7, "ic": 303, "ticket": 310 },
+                        { "km": 8, "ic": 324, "ticket": 330 },
+                        { "km": 9, "ic": 335, "ticket": 340 },
+                        { "km": 10, "ic": 356, "ticket": 360 },
+                        { "km": 11, "ic": 377, "ticket": 380 }
+                    ]
+                },
+                "matsudo": {
+                    "name": "松戸線",
+                    "fares": [
+                        { "km": 5, "ic": 167, "ticket": 170 },
+                        { "km": 9, "ic": 188, "ticket": 190 },
+                        { "km": 13, "ic": 209, "ticket": 210 },
+                        { "km": 17, "ic": 230, "ticket": 230 },
+                        { "km": 22, "ic": 252, "ticket": 260 },
+                        { "km": 27, "ic": 272, "ticket": 280 }
+                    ]
+                },
+                "skyAccess": {
+                    "name": "成田空港線 (成田スカイアクセス線)",
+                    "fares": [
+                        { "km": 3, "ic": 210, "ticket": 210 },
+                        { "km": 5, "ic": 314, "ticket": 320 },
+                        { "km": 7, "ic": 388, "ticket": 390 },
+                        { "km": 9, "ic": 462, "ticket": 470 },
+                        { "km": 11, "ic": 524, "ticket": 530 },
+                        { "km": 14, "ic": 597, "ticket": 600 },
+                        { "km": 17, "ic": 660, "ticket": 660 },
+                        { "km": 20, "ic": 712, "ticket": 720 },
+                        { "km": 23, "ic": 765, "ticket": 770 },
+                        { "km": 26, "ic": 796, "ticket": 800 },
+                        { "km": 29, "ic": 828, "ticket": 830 },
+                        { "km": 33, "ic": 859, "ticket": 860 },
+                        { "km": 37, "ic": 891, "ticket": 900 },
+                        { "km": 41, "ic": 922, "ticket": 930 },
+                        { "km": 45, "ic": 953, "ticket": 960 },
+                        { "km": 49, "ic": 974, "ticket": 980 },
+                        { "km": 52, "ic": 995, "ticket": 1000 }
+                    ]
+                },
+                "hokuso": {
+                    "name": "北総線 (京成高砂～印旛日本医大)",
+                    "fares": [
+                        { "km": 3, "ic": 188, "ticket": 190 },
+                        { "km": 5, "ic": 279, "ticket": 280 },
+                        { "km": 7, "ic": 330, "ticket": 330 },
+                        { "km": 9, "ic": 379, "ticket": 380 },
+                        { "km": 11, "ic": 427, "ticket": 430 },
+                        { "km": 14, "ic": 475, "ticket": 480 },
+                        { "km": 17, "ic": 546, "ticket": 550 },
+                        { "km": 20, "ic": 617, "ticket": 620 },
+                        { "km": 23, "ic": 669, "ticket": 670 },
+                        { "km": 26, "ic": 720, "ticket": 720 },
+                        { "km": 29, "ic": 768, "ticket": 770 },
+                        { "km": 33, "ic": 811, "ticket": 820 }
+                    ]
+                }
+            }
+        },
+        "keikyu": {
+            "name": "京急電鉄",
+            "description": "天空橋～羽田空港第1・第2ターミナル間に加算運賃の設定あり\n特定区間運賃の設定あり",
+            "fareTables": {
+                "keikyuLines": {
+                    "name": "各線",
+                    "fares": [
+                        { "km": 3, "ic": 150, "ticket": 150 },
+                        { "km": 6, "ic": 180, "ticket": 180 },
+                        { "km": 10, "ic": 228, "ticket": 230 },
+                        { "km": 15, "ic": 277, "ticket": 280 },
+                        { "km": 20, "ic": 313, "ticket": 320 },
+                        { "km": 25, "ic": 347, "ticket": 350 },
+                        { "km": 30, "ic": 403, "ticket": 410 },
+                        { "km": 35, "ic": 455, "ticket": 460 },
+                        { "km": 40, "ic": 510, "ticket": 510 },
+                        { "km": 45, "ic": 566, "ticket": 570 },
+                        { "km": 50, "ic": 620, "ticket": 620 },
+                        { "km": 55, "ic": 667, "ticket": 670 },
+                        { "km": 60, "ic": 710, "ticket": 710 },
+                        { "km": 65, "ic": 740, "ticket": 740 },
+                        { "km": 67, "ic": 740, "ticket": 740 }
+                    ]
+                }
+            }
+        },
+        "tokyu": {
+            "name": "東急電鉄",
+            "description": "世田谷線、こどもの国線は均一運賃\n新綱島～新横浜間に加算運賃の設定あり\n田園都市線とこどもの国線に乗り継ぎ運賃の設定あり",
+            "fareTables": {
+                "tokyuLines": {
+                    "name": "各線 (世田谷線、こどもの国線は除く)",
+                    "fares": [
+                        { "km": 3, "ic": 140, "ticket": 140 },
+                        { "km": 7, "ic": 180, "ticket": 180 },
+                        { "km": 11, "ic": 227, "ticket": 230 },
+                        { "km": 15, "ic": 250, "ticket": 250 },
+                        { "km": 20, "ic": 288, "ticket": 290 },
+                        { "km": 25, "ic": 309, "ticket": 310 },
+                        { "km": 30, "ic": 347, "ticket": 350 },
+                        { "km": 35, "ic": 381, "ticket": 390 },
+                        { "km": 40, "ic": 430, "ticket": 430 },
+                        { "km": 45, "ic": 469, "ticket": 470 },
+                        { "km": 50, "ic": 500, "ticket": 500 },
+                        { "km": 56, "ic": 531, "ticket": 540 }
+                    ]
+                }
+            }
+        },
+        "keio": {
+            "name": "京王電鉄",
+            "fareTables": {
+                "keioLines": {
+                    "name": "各線",
+                    "fares": [
+                        { "km": 4, "ic": 140, "ticket": 140 },
+                        { "km": 6, "ic": 160, "ticket": 160 },
+                        { "km": 9, "ic": 188, "ticket": 190 },
+                        { "km": 12, "ic": 209, "ticket": 210 },
+                        { "km": 15, "ic": 230, "ticket": 230 },
+                        { "km": 19, "ic": 273, "ticket": 280 },
+                        { "km": 24, "ic": 314, "ticket": 320 },
+                        { "km": 30, "ic": 356, "ticket": 360 },
+                        { "km": 37, "ic": 388, "ticket": 390 },
+                        { "km": 44, "ic": 409, "ticket": 410 },
+                        { "km": 52, "ic": 430, "ticket": 430 }
+                    ]
+                }
+            }
+        },
+        "odakyu": {
+            "name": "小田急電鉄",
+            "fareTables": {
+                "odakyuLines": {
+                    "name": "各線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 136, "ticket": 140 },
+                        { "km": 6, "ic": 167, "ticket": 170 },
+                        { "km": 9, "ic": 199, "ticket": 200 },
+                        { "km": 13, "ic": 230, "ticket": 230 },
+                        { "km": 17, "ic": 261, "ticket": 260 },
+                        { "km": 21, "ic": 293, "ticket": 300 },
+                        { "km": 25, "ic": 324, "ticket": 330 },
+                        { "km": 29, "ic": 356, "ticket": 360 },
+                        { "km": 33, "ic": 387, "ticket": 390 },
+                        { "km": 37, "ic": 429, "ticket": 430 },
+                        { "km": 41, "ic": 472, "ticket": 480 },
+                        { "km": 46, "ic": 513, "ticket": 520 },
+                        { "km": 51, "ic": 555, "ticket": 560 },
+                        { "km": 56, "ic": 607, "ticket": 610 },
+                        { "km": 61, "ic": 649, "ticket": 650 },
+                        { "km": 66, "ic": 692, "ticket": 700 },
+                        { "km": 71, "ic": 743, "ticket": 750 },
+                        { "km": 76, "ic": 796, "ticket": 800 },
+                        { "km": 81, "ic": 848, "ticket": 850 },
+                        { "km": 83, "ic": 901, "ticket": 910 }
+                    ]
+                }
+            }
+        },
+        "sotetsu": {
+            "name": "相模鉄道",
+            "description": "いずみ野線、新横浜線には加算運賃の設定あり",
+            "fareTables": {
+                "sotetsuLines": {
+                    "name": "各線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 157, "ticket": 160 },
+                        { "km": 7, "ic": 188, "ticket": 190 },
+                        { "km": 11, "ic": 209, "ticket": 210 },
+                        { "km": 15, "ic": 241, "ticket": 250 },
+                        { "km": 19, "ic": 272, "ticket": 280 },
+                        { "km": 23, "ic": 293, "ticket": 300 },
+                        { "km": 26, "ic": 324, "ticket": 330 }
+                    ]
+                }
+            }
+        },
+        "tokyoMetro": {
+            "name": "東京メトロ",
+            "description": "北千住～綾瀬間、目黒～白金高輪間に特例あり\n都営地下鉄との乗継割引あり",
+            "fareTables": {
+                "tokyoMetroLines": {
+                    "name": "各線",
+                    "description": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 6, "ic": 178, "ticket": 180 },
+                        { "km": 11, "ic": 209, "ticket": 210 },
+                        { "km": 19, "ic": 252, "ticket": 260 },
+                        { "km": 27, "ic": 293, "ticket": 300 },
+                        { "km": 40, "ic": 324, "ticket": 330 }
+                    ]
+                }
+            }
+        },
+        "toeiSubway": {
+            "name": "都営地下鉄",
+            "description": "目黒～白金高輪間に特例あり\n東京メトロとの乗継割引あり",
+            "fareTables": {
+                "toeiSubwayLines": {
+                    "name": "各線",
+                    "fares": [
+                        { "km": 4, "ic": 178, "ticket": 180 },
+                        { "km": 9, "ic": 220, "ticket": 220 },
+                        { "km": 15, "ic": 272, "ticket": 280 },
+                        { "km": 21, "ic": 325, "ticket": 330 },
+                        { "km": 27, "ic": 377, "ticket": 380 },
+                        { "km": 46, "ic": 430, "ticket": 430 }
+                    ]
+                }
+            }
+        }
+    }
+}
