@@ -167,10 +167,17 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number } | null>(
     null
   );
-  const [selecting, setSelecting] = useState<{
-    startPx: number;
-    currentPx: number;
-  } | null>(null);
+  const [interaction, setInteraction] = useState<
+    | { kind: "select"; startPx: number; currentPx: number }
+    | {
+        kind: "pan";
+        startPx: number;
+        currentPx: number;
+        startMinKm: number;
+        startMaxKm: number;
+      }
+    | null
+  >(null);
 
   const dims = { w: 900, h: 480, m: { l: 64, r: 20, t: 18, b: 54 } };
   const innerW = dims.w - dims.m.l - dims.m.r;
@@ -248,6 +255,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }, [domain.maxKm, domain.minKm, fareKind, hoverKm, series]);
 
   function onMouseMove(e: MouseEvent<SVGSVGElement>) {
+    if (interaction) return;
     const svg = svgRef.current;
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
@@ -263,7 +271,6 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }
 
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
-    if (!e.shiftKey) return;
     if (series.length === 0) return;
     const svg = svgRef.current;
     if (!svg) return;
@@ -272,39 +279,77 @@ export default function StepFareChart({ fareKind, series }: Props) {
     const x = (e.clientX - rect.left) * scaleX;
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
     svg.setPointerCapture(e.pointerId);
-    setSelecting({ startPx: xInner, currentPx: xInner });
+    setHoverKm(null);
+
+    if (e.shiftKey) {
+      // Pan only makes sense when we are zoomed in (domain range smaller than base extent).
+      const canPan = domain.maxKm - domain.minKm < baseExtent.maxKm - baseExtent.minKm;
+      if (!canPan) return;
+      setInteraction({
+        kind: "pan",
+        startPx: xInner,
+        currentPx: xInner,
+        startMinKm: domain.minKm,
+        startMaxKm: domain.maxKm,
+      });
+    } else {
+      setInteraction({ kind: "select", startPx: xInner, currentPx: xInner });
+    }
     e.preventDefault();
   }
 
   function onPointerMove(e: PointerEvent<SVGSVGElement>) {
-    if (!selecting) return;
+    if (!interaction) return;
     const svg = svgRef.current;
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
     const scaleX = dims.w / rect.width;
     const x = (e.clientX - rect.left) * scaleX;
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
-    setSelecting((prev) => (prev ? { startPx: prev.startPx, currentPx: xInner } : prev));
+
+    if (interaction.kind === "select") {
+      setInteraction((prev) =>
+        prev && prev.kind === "select"
+          ? { kind: "select", startPx: prev.startPx, currentPx: xInner }
+          : prev
+      );
+    } else {
+      const kmPerPx = (interaction.startMaxKm - interaction.startMinKm) / innerW;
+      const deltaKm = (interaction.startPx - xInner) * kmPerPx;
+      const range = interaction.startMaxKm - interaction.startMinKm;
+      const minLimit = baseExtent.minKm;
+      const maxLimit = baseExtent.maxKm;
+      const nextMin = clamp(interaction.startMinKm + deltaKm, minLimit, maxLimit - range);
+      setZoomX({ minKm: nextMin, maxKm: nextMin + range });
+      setInteraction((prev) =>
+        prev && prev.kind === "pan"
+          ? { ...prev, currentPx: xInner }
+          : prev
+      );
+    }
     e.preventDefault();
   }
 
   function onPointerUp(e: PointerEvent<SVGSVGElement>) {
-    if (!selecting) return;
+    if (!interaction) return;
     const svg = svgRef.current;
     if (svg) svg.releasePointerCapture(e.pointerId);
-    const a = selecting.startPx;
-    const b = selecting.currentPx;
-    setSelecting(null);
+    const startPx = interaction.startPx;
+    const endPx = interaction.currentPx;
+    const kind = interaction.kind;
+    setInteraction(null);
 
-    if (Math.abs(b - a) < 10) return; // ignore tiny drags
-    const km1 = fromX(a);
-    const km2 = fromX(b);
-    const minKm = Math.min(km1, km2);
-    const maxKm = Math.max(km1, km2);
-    const clampedMin = clamp(minKm, baseExtent.minKm, baseExtent.maxKm);
-    const clampedMax = clamp(maxKm, baseExtent.minKm, baseExtent.maxKm);
-    if (clampedMax - clampedMin < 0.01) return;
-    setZoomX({ minKm: clampedMin, maxKm: clampedMax });
+    if (kind === "select") {
+      if (Math.abs(endPx - startPx) < 10) return; // ignore tiny drags
+      const km1 = fromX(startPx);
+      const km2 = fromX(endPx);
+      const minKm = Math.min(km1, km2);
+      const maxKm = Math.max(km1, km2);
+      const clampedMin = clamp(minKm, baseExtent.minKm, baseExtent.maxKm);
+      const clampedMax = clamp(maxKm, baseExtent.minKm, baseExtent.maxKm);
+      if (clampedMax - clampedMin < 0.01) return;
+      setZoomX({ minKm: clampedMin, maxKm: clampedMax });
+    }
     e.preventDefault();
   }
 
@@ -317,7 +362,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
       <div className="flex items-center justify-between gap-4">
         <div className="text-sm font-semibold text-zinc-900">運賃グラフ</div>
         <div className="text-xs text-zinc-600">
-          横軸: 距離(km) / 縦軸: 金額(円)（Shift+ドラッグで拡大）
+          横軸: 距離(km) / 縦軸: 金額(円)（ドラッグで拡大 / Shift+ドラッグで移動）
         </div>
       </div>
 
@@ -451,11 +496,11 @@ export default function StepFareChart({ fareKind, series }: Props) {
           ) : null}
 
           {/* Zoom selection */}
-          {selecting ? (
+          {interaction && interaction.kind === "select" ? (
             <g clipPath={`url(#${clipId})`}>
               {(() => {
-                const x1 = Math.min(selecting.startPx, selecting.currentPx);
-                const x2 = Math.max(selecting.startPx, selecting.currentPx);
+                const x1 = Math.min(interaction.startPx, interaction.currentPx);
+                const x2 = Math.max(interaction.startPx, interaction.currentPx);
                 const w = Math.max(1, x2 - x1);
                 return (
                   <rect
