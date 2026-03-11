@@ -244,13 +244,12 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }, [domain.maxFare, domain.maxKm, domain.minKm]);
 
   const hoverValues = useMemo(() => {
-    if (hoverKm === null) return null;
-    const km = clamp(hoverKm, domain.minKm, domain.maxKm);
+    const km = hoverKm === null ? null : clamp(hoverKm, domain.minKm, domain.maxKm);
     return series.map((s) => ({
       id: s.id,
       label: `${s.companyName} / ${s.tableName}`,
       color: s.color,
-      yen: fareAtDistance(s.fares, km, fareKind),
+      yen: km === null ? null : fareAtDistance(s.fares, km, fareKind),
     }));
   }, [domain.maxKm, domain.minKm, fareKind, hoverKm, series]);
 
@@ -535,30 +534,6 @@ export default function StepFareChart({ fareKind, series }: Props) {
           </div>
         ) : null}
 
-        {hoverValues && hoverKm !== null ? (
-          <div className="pointer-events-none absolute right-3 top-3 w-[280px] rounded-xl border border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur">
-            <div className="mb-2 text-xs font-semibold text-zinc-900">
-              {hoverKm.toFixed(2)} km 時点
-            </div>
-            <div className="flex flex-col gap-1">
-              {hoverValues.map((v) => (
-                <div key={v.id} className="flex items-center gap-2 text-xs">
-                  <span
-                    className="inline-block h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: v.color }}
-                  />
-                  <div className="min-w-0 flex-1 truncate text-zinc-700">
-                    {v.label}
-                  </div>
-                  <div className="tabular-nums text-zinc-950">
-                    {v.yen === null ? "—" : `${v.yen}円`}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
         {series.length === 0 ? (
           <div className="absolute inset-0 grid place-items-center">
             <div className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
@@ -568,27 +543,39 @@ export default function StepFareChart({ fareKind, series }: Props) {
         ) : null}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {series.slice(0, 8).map((s) => (
-          <div
-            key={`legend-${s.id}`}
-            className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-xs text-zinc-700"
-            title={`${s.companyName} / ${s.tableName}`}
-          >
-            <span
-              className="inline-block h-2.5 w-2.5 rounded-full"
-              style={{ backgroundColor: s.color }}
-            />
-            <span className="max-w-[260px] truncate">
-              {s.companyName} / {s.tableName}
-            </span>
+      <div className="rounded-xl border border-zinc-200 bg-white p-3">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <div className="text-xs font-semibold text-zinc-900">インスペクタ</div>
+          <div className="text-[11px] text-zinc-600">
+            {hoverKm === null
+              ? "ホバーで金額表示"
+              : `${hoverKm.toFixed(2)} km 時点（欠損は —）`}
           </div>
-        ))}
-        {series.length > 8 ? (
-          <div className="rounded-full border border-dashed border-zinc-300 bg-white px-2.5 py-1 text-xs text-zinc-600">
-            +{series.length - 8} 件
-          </div>
-        ) : null}
+        </div>
+        <div className="flex max-h-[220px] flex-col gap-1 overflow-auto pr-1">
+          {hoverValues.map((v) => (
+            <div
+              key={v.id}
+              className="flex items-center gap-2 rounded-lg bg-zinc-50 px-2.5 py-1.5 text-xs"
+            >
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: v.color }}
+              />
+              <div className="min-w-0 flex-1 truncate text-zinc-700">
+                {v.label}
+              </div>
+              <div className="tabular-nums text-zinc-950">
+                {v.yen === null ? "—" : `${v.yen}円`}
+              </div>
+            </div>
+          ))}
+          {hoverValues.length === 0 ? (
+            <div className="text-xs text-zinc-600">
+              表示する路線を選択してください
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
