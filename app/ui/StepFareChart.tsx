@@ -166,8 +166,16 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number } | null>(
     null
   );
+  const [hoverZone, setHoverZone] = useState<"none" | "plot" | "xband">("none");
   const [interaction, setInteraction] = useState<
     | { kind: "select"; startPx: number; currentPx: number }
+    | {
+        kind: "xzoom";
+        startPx: number;
+        currentPx: number;
+        startMinKm: number;
+        startMaxKm: number;
+      }
     | {
         kind: "pan";
         startPx: number;
@@ -178,9 +186,37 @@ export default function StepFareChart({ fareKind, series }: Props) {
     | null
   >(null);
 
-  const dims = { w: 900, h: 480, m: { l: 64, r: 20, t: 18, b: 54 } };
+  const dims = { w: 900, h: 480, m: { l: 80, r: 40, t: 18, b: 54 } };
   const innerW = dims.w - dims.m.l - dims.m.r;
   const innerH = dims.h - dims.m.t - dims.m.b;
+  const plotRect = {
+    x: dims.m.l,
+    y: dims.m.t,
+    right: dims.m.l + innerW,
+    bottom: dims.m.t + innerH,
+  };
+
+  function clientToSvg(clientX: number, clientY: number) {
+    const svg = svgRef.current;
+    if (!svg) return null;
+
+    // Most robust mapping: respects CSS transforms and browser zoom.
+    const ctm = svg.getScreenCTM();
+    if (ctm) {
+      const p = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
+      return { x: p.x, y: p.y };
+    }
+
+    // Fallback: assumes linear scale between viewBox and rendered rect.
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
+    const scaleX = dims.w / rect.width;
+    const scaleY = dims.h / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
+  }
 
   const baseExtent = useMemo(() => {
     if (series.length === 0) return { minKm: 0, maxKm: 10 };
@@ -216,6 +252,9 @@ export default function StepFareChart({ fareKind, series }: Props) {
       maxFare: Math.max(1, niceCeil(maxFareRaw)),
     };
   }, [baseExtent.maxKm, baseExtent.minKm, fareKind, series, zoomX]);
+
+  const canPan =
+    domain.maxKm - domain.minKm < baseExtent.maxKm - baseExtent.minKm;
 
   const toX = (km: number) =>
     dims.m.l + ((km - domain.minKm) / (domain.maxKm - domain.minKm)) * innerW;
@@ -254,11 +293,20 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
   function onMouseMove(e: MouseEvent<SVGSVGElement>) {
     if (interaction) return;
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    const scaleX = dims.w / rect.width;
-    const x = (e.clientX - rect.left) * scaleX;
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+    const x = p.x;
+    const y = p.y;
+
+    const inPlotArea =
+      x >= plotRect.x &&
+      x <= plotRect.right &&
+      y >= plotRect.y &&
+      y <= plotRect.bottom;
+    const inXAxisBand =
+      x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+
+    setHoverZone(inXAxisBand ? "xband" : inPlotArea ? "plot" : "none");
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
     const km = fromX(xInner);
     setHoverKm(km);
@@ -266,23 +314,51 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
   function onMouseLeave() {
     setHoverKm(null);
+    setHoverZone("none");
   }
 
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
     if (series.length === 0) return;
     const svg = svgRef.current;
     if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    const scaleX = dims.w / rect.width;
-    const x = (e.clientX - rect.left) * scaleX;
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+    const x = p.x;
+    const y = p.y;
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
+
+    const inPlotArea =
+      x >= plotRect.x &&
+      x <= plotRect.right &&
+      y >= plotRect.y &&
+      y <= plotRect.bottom;
+    const inXAxisBand =
+      x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+
+    // Assignments:
+    // - Shift+drag => zoom select (anywhere)
+    // - X axis band drag => continuous zoom (right=in, left=out)
+    // - Plot area drag => pan (only when zoomed in)
+    const wantsSelectZoom = e.shiftKey;
+    const wantsXBandZoom = !e.shiftKey && inXAxisBand;
+    const wantsPan = !wantsSelectZoom && !wantsXBandZoom && inPlotArea;
+    if (wantsPan && !canPan) return;
+    if (!wantsSelectZoom && !wantsXBandZoom && !wantsPan) return;
+
     svg.setPointerCapture(e.pointerId);
     setHoverKm(null);
 
-    if (e.shiftKey) {
-      // Pan only makes sense when we are zoomed in (domain range smaller than base extent).
-      const canPan = domain.maxKm - domain.minKm < baseExtent.maxKm - baseExtent.minKm;
-      if (!canPan) return;
+    if (wantsSelectZoom) {
+      setInteraction({ kind: "select", startPx: xInner, currentPx: xInner });
+    } else if (wantsXBandZoom) {
+      setInteraction({
+        kind: "xzoom",
+        startPx: xInner,
+        currentPx: xInner,
+        startMinKm: domain.minKm,
+        startMaxKm: domain.maxKm,
+      });
+    } else {
       setInteraction({
         kind: "pan",
         startPx: xInner,
@@ -290,8 +366,6 @@ export default function StepFareChart({ fareKind, series }: Props) {
         startMinKm: domain.minKm,
         startMaxKm: domain.maxKm,
       });
-    } else {
-      setInteraction({ kind: "select", startPx: xInner, currentPx: xInner });
     }
     e.preventDefault();
   }
@@ -300,15 +374,34 @@ export default function StepFareChart({ fareKind, series }: Props) {
     if (!interaction) return;
     const svg = svgRef.current;
     if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    const scaleX = dims.w / rect.width;
-    const x = (e.clientX - rect.left) * scaleX;
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+    const x = p.x;
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
 
     if (interaction.kind === "select") {
       setInteraction((prev) =>
         prev && prev.kind === "select"
           ? { kind: "select", startPx: prev.startPx, currentPx: xInner }
+          : prev
+      );
+    } else if (interaction.kind === "xzoom") {
+      const deltaPx = xInner - interaction.startPx;
+      const baseSpan = interaction.startMaxKm - interaction.startMinKm;
+      const fullSpan = baseExtent.maxKm - baseExtent.minKm;
+      const minSpan = Math.max(fullSpan / 500, 0.05);
+
+      // Right drag => zoom in (smaller span). Left drag => zoom out.
+      const zoomFactor = Math.exp(-deltaPx / 240);
+      const nextSpan = clamp(baseSpan * zoomFactor, minSpan, fullSpan);
+      const center = (interaction.startMinKm + interaction.startMaxKm) / 2;
+      let nextMin = center - nextSpan / 2;
+      nextMin = clamp(nextMin, baseExtent.minKm, baseExtent.maxKm - nextSpan);
+      setZoomX({ minKm: nextMin, maxKm: nextMin + nextSpan });
+
+      setInteraction((prev) =>
+        prev && prev.kind === "xzoom"
+          ? { ...prev, currentPx: xInner }
           : prev
       );
     } else {
@@ -360,7 +453,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
       <div className="flex items-center justify-between gap-4">
         <div className="text-sm font-semibold text-zinc-900">運賃グラフ</div>
         <div className="text-xs text-zinc-600">
-          横軸: 距離(km) / 縦軸: 金額(円)（ドラッグで拡大 / Shift+ドラッグで移動）
+          横軸: 距離(km) / 縦軸: 金額(円)
         </div>
       </div>
 
@@ -368,7 +461,16 @@ export default function StepFareChart({ fareKind, series }: Props) {
         <svg
           ref={svgRef}
           viewBox={`0 0 ${dims.w} ${dims.h}`}
-          className="h-[420px] w-full select-none rounded-xl bg-white"
+          className={
+            "h-[420px] w-full select-none rounded-xl bg-white " +
+            (hoverZone === "xband"
+              ? "cursor-ew-resize"
+              : hoverZone === "plot"
+                ? canPan
+                  ? "cursor-grab"
+                  : "cursor-crosshair"
+                : "cursor-default")
+          }
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           onPointerDown={onPointerDown}
@@ -437,10 +539,10 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   x={toX(t)}
                   y={dims.h - dims.m.b + 22}
                   textAnchor="middle"
-                  fontSize={12}
+                  fontSize={16}
                   fill="#52525B"
                 >
-                  {t.toFixed(t < 10 ? 1 : 0)}
+                  {t.toFixed(t < 10 ? 1 : 0)}km
                 </text>
               </g>
             ))}
@@ -450,10 +552,10 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   x={dims.m.l - 10}
                   y={toY(t) + 4}
                   textAnchor="end"
-                  fontSize={12}
+                  fontSize={16}
                   fill="#52525B"
                 >
-                  {Math.round(t)}
+                  {Math.round(t)}円
                 </text>
               </g>
             ))}
