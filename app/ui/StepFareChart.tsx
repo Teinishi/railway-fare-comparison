@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent, PointerEvent } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 
 type FareKind = "ic" | "ticket";
 
@@ -162,6 +162,7 @@ function buildStepPath(
 
 export default function StepFareChart({ fareKind, series }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const clipId = useId();
   const [hoverKm, setHoverKm] = useState<number | null>(null);
   const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number } | null>(
     null
@@ -334,6 +335,17 @@ export default function StepFareChart({ fareKind, series }: Props) {
           role="img"
           aria-label="運賃の距離別グラフ"
         >
+          <defs>
+            <clipPath id={clipId}>
+              <rect
+                x={dims.m.l}
+                y={dims.m.t}
+                width={innerW}
+                height={innerH}
+              />
+            </clipPath>
+          </defs>
+
           {/* Grid + axes */}
           <g>
             {ticks.x.map((t) => (
@@ -405,7 +417,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
           </g>
 
           {/* Series */}
-          <g>
+          <g clipPath={`url(#${clipId})`}>
             {series.map((s) => {
               const d = buildStepPath(s.fares, fareKind, toX, toY);
               return (
@@ -425,7 +437,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
           {/* Hover crosshair */}
           {hoverKm !== null ? (
-            <g>
+            <g clipPath={`url(#${clipId})`}>
               <line
                 x1={toX(hoverKm)}
                 x2={toX(hoverKm)}
@@ -440,7 +452,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
           {/* Zoom selection */}
           {selecting ? (
-            <g>
+            <g clipPath={`url(#${clipId})`}>
               {(() => {
                 const x1 = Math.min(selecting.startPx, selecting.currentPx);
                 const x2 = Math.max(selecting.startPx, selecting.currentPx);
