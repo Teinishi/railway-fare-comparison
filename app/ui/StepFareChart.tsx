@@ -33,10 +33,9 @@ function niceCeil(value: number) {
   const exp = Math.floor(Math.log10(value));
   const base = 10 ** exp;
   const n = value / base;
-  if (n <= 1) return 1 * base;
-  if (n <= 2) return 2 * base;
-  if (n <= 5) return 5 * base;
-  return 10 * base;
+  if (n <= 1) return base;
+  if (n <= 1.5) return 1.5 * base;
+  return Math.ceil(n) * base;
 }
 
 function fareValue(row: FarePoint, kind: FareKind): number | null {
