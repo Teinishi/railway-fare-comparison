@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent, PointerEvent } from "react";
-import { useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 type FareKind = "ic" | "ticket";
 
@@ -28,12 +28,58 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
+function niceStep(rawStep: number) {
+  if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
+  const exp = Math.floor(Math.log10(rawStep));
+  const base = 10 ** exp;
+  const n = rawStep / base;
+  if (n <= 1) return 1 * base;
+  if (n <= 2) return 2 * base;
+  if (n <= 2.5) return 2.5 * base;
+  if (n <= 5) return 5 * base;
+  return 10 * base;
+}
+
+function decimalsForStep(step: number) {
+  if (!Number.isFinite(step) || step <= 0) return 0;
+  const s = step.toString();
+  if (s.includes("e-")) {
+    const [, exp] = s.split("e-");
+    return Math.min(6, Math.max(0, Number(exp) || 0));
+  }
+  const dot = s.indexOf(".");
+  if (dot === -1) return 0;
+  return Math.min(6, s.length - dot - 1);
+}
+
+function buildNiceTicks(min: number, max: number, targetCount: number) {
+  const span = max - min;
+  if (!Number.isFinite(span) || span <= 0) return { ticks: [min, max], step: 1 };
+
+  const rawStep = span / Math.max(1, targetCount - 1);
+  const step = niceStep(rawStep);
+  const first = Math.ceil(min / step) * step;
+  const last = Math.floor(max / step) * step;
+
+  const ticks: number[] = [];
+  if (Number.isFinite(first) && Number.isFinite(last) && first <= last) {
+    for (let v = first; v <= last + step * 1e-9; v += step) {
+      ticks.push(v);
+      if (ticks.length > 200) break;
+    }
+  }
+
+  if (ticks.length < 2) return { ticks: [min, max], step };
+  return { ticks, step };
+}
+
 function niceCeil(value: number) {
   if (!Number.isFinite(value) || value <= 0) return 0;
   const exp = Math.floor(Math.log10(value));
   const base = 10 ** exp;
   const n = value / base;
   if (n <= 1) return base;
+  if (n <= 1.2) return 1.2 * base;
   if (n <= 1.5) return 1.5 * base;
   return Math.ceil(n) * base;
 }
@@ -163,9 +209,11 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const clipId = useId();
   const [hoverKm, setHoverKm] = useState<number | null>(null);
-  const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number } | null>(
-    null
-  );
+  const DEFAULT_X_RANGE_KM = 50;
+  const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number }>(() => ({
+    minKm: 0,
+    maxKm: DEFAULT_X_RANGE_KM,
+  }));
   const [hoverZone, setHoverZone] = useState<"none" | "plot" | "xband">("none");
   const [interaction, setInteraction] = useState<
     | { kind: "select"; startPx: number; currentPx: number }
@@ -186,7 +234,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
     | null
   >(null);
 
-  const dims = { w: 900, h: 480, m: { l: 80, r: 40, t: 18, b: 54 } };
+  const dims = useMemo(() => ({ w: 900, h: 480, m: { l: 80, r: 40, t: 40, b: 20 } }), []);
   const innerW = dims.w - dims.m.l - dims.m.r;
   const innerH = dims.h - dims.m.t - dims.m.b;
   const plotRect = {
@@ -196,7 +244,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
     bottom: dims.m.t + innerH,
   };
 
-  function clientToSvg(clientX: number, clientY: number) {
+  const clientToSvg = useCallback((clientX: number, clientY: number) => {
     const svg = svgRef.current;
     if (!svg) return null;
 
@@ -216,27 +264,33 @@ export default function StepFareChart({ fareKind, series }: Props) {
       x: (clientX - rect.left) * scaleX,
       y: (clientY - rect.top) * scaleY,
     };
-  }
+  }, [svgRef, dims]);
 
   const baseExtent = useMemo(() => {
-    if (series.length === 0) return { minKm: 0, maxKm: 10 };
-    let minKm = Infinity;
+    if (series.length === 0) return { minKm: 0, maxKm: DEFAULT_X_RANGE_KM };
     let maxKm = -Infinity;
     for (const s of series) {
       const ext = seriesVisibleExtent(s.fares, fareKind);
       if (!ext) continue;
-      if (ext.startKm < minKm) minKm = ext.startKm;
       if (ext.endKm > maxKm) maxKm = ext.endKm;
     }
-    if (!Number.isFinite(minKm) || !Number.isFinite(maxKm) || minKm >= maxKm) {
-      return { minKm: 0, maxKm: 10 };
+    if (!Number.isFinite(maxKm) || maxKm <= 0) {
+      return { minKm: 0, maxKm: DEFAULT_X_RANGE_KM };
     }
-    return { minKm, maxKm };
+    return { minKm: 0, maxKm: Math.max(maxKm, DEFAULT_X_RANGE_KM) };
   }, [fareKind, series]);
 
+  const isDefaultView =
+    Math.abs(zoomX.minKm - 0) < 1e-9 &&
+    Math.abs(zoomX.maxKm - DEFAULT_X_RANGE_KM) < 1e-9;
+
+  function resetToDefaultView() {
+    setZoomX({ minKm: 0, maxKm: DEFAULT_X_RANGE_KM });
+  }
+
   const domain = useMemo(() => {
-    const minKm = zoomX ? clamp(zoomX.minKm, baseExtent.minKm, baseExtent.maxKm) : baseExtent.minKm;
-    const maxKm = zoomX ? clamp(zoomX.maxKm, baseExtent.minKm, baseExtent.maxKm) : baseExtent.maxKm;
+    const minKm = clamp(zoomX.minKm, baseExtent.minKm, baseExtent.maxKm);
+    const maxKm = clamp(zoomX.maxKm, baseExtent.minKm, baseExtent.maxKm);
     const spanKm = Math.max(0.001, maxKm - minKm);
 
     let maxFareRaw = -Infinity;
@@ -261,24 +315,19 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const toY = (yen: number) =>
     dims.m.t + innerH - (yen / domain.maxFare) * innerH;
 
-  const fromX = (px: number) =>
-    domain.minKm + ((px - dims.m.l) / innerW) * (domain.maxKm - domain.minKm);
+  const fromX = useCallback((px: number) => domain.minKm + ((px - dims.m.l) / innerW) * (domain.maxKm - domain.minKm), [domain, dims, innerW]);
 
   const ticks = useMemo(() => {
     const xTickCount = 6;
     const yTickCount = 6;
     const x: number[] = [];
     const y: number[] = [];
-    for (let i = 0; i < xTickCount; i++) {
-      x.push(
-        domain.minKm +
-          ((domain.maxKm - domain.minKm) * i) / (xTickCount - 1)
-      );
-    }
+    const xt = buildNiceTicks(domain.minKm, domain.maxKm, xTickCount);
+    x.push(...xt.ticks);
     for (let i = 0; i < yTickCount; i++) {
       y.push((domain.maxFare * i) / (yTickCount - 1));
     }
-    return { x, y };
+    return { x, y, xStep: xt.step };
   }, [domain.maxFare, domain.maxKm, domain.minKm]);
 
   const hoverValues = useMemo(() => {
@@ -445,8 +494,50 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }
 
   function onDoubleClick() {
-    setZoomX(null);
+    resetToDefaultView();
   }
+
+  // Attach a non-passive wheel listener to allow preventDefault() without warnings.
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const handler = (e: WheelEvent) => {
+      if (series.length === 0) return;
+      const p = clientToSvg(e.clientX, e.clientY);
+      if (!p) return;
+
+      const x = p.x;
+      const y = p.y;
+      const inXAxisBand =
+        x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+      if (!inXAxisBand) return;
+
+      const fullSpan = baseExtent.maxKm - baseExtent.minKm;
+      if (!Number.isFinite(fullSpan) || fullSpan <= 0.001) return;
+      const minSpan = Math.max(fullSpan / 500, 0.05);
+
+      const currentSpan = domain.maxKm - domain.minKm;
+      const xClamped = clamp(x, dims.m.l, dims.w - dims.m.r);
+      const kmAtCursor = clamp(fromX(xClamped), domain.minKm, domain.maxKm);
+      const ratio = (kmAtCursor - domain.minKm) / currentSpan;
+
+      // Wheel up (deltaY<0) => zoom in. Wheel down => zoom out.
+      const factor = Math.exp(e.deltaY / 260);
+      const nextSpan = clamp(currentSpan * factor, minSpan, fullSpan);
+
+      let nextMin = kmAtCursor - ratio * nextSpan;
+      nextMin = clamp(nextMin, baseExtent.minKm, baseExtent.maxKm - nextSpan);
+      setZoomX({ minKm: nextMin, maxKm: nextMin + nextSpan });
+
+      e.preventDefault();
+    };
+
+    svg.addEventListener("wheel", handler, { passive: false });
+    return () => {
+      svg.removeEventListener("wheel", handler);
+    };
+  }, [baseExtent.maxKm, baseExtent.minKm, clientToSvg, dims.m.l, dims.m.r, dims.w, domain.maxKm, domain.minKm, fromX, plotRect.bottom, plotRect.right, plotRect.x, series.length]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -462,7 +553,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
           ref={svgRef}
           viewBox={`0 0 ${dims.w} ${dims.h}`}
           className={
-            "h-[420px] w-full select-none rounded-xl bg-white " +
+            "h-105 w-full select-none rounded-xl bg-white " +
             (hoverZone === "xband"
               ? "cursor-ew-resize"
               : hoverZone === "plot"
@@ -542,7 +633,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   fontSize={16}
                   fill="#52525B"
                 >
-                  {t.toFixed(t < 10 ? 1 : 0)}km
+                  {t.toFixed(decimalsForStep(ticks.xStep))}km
                 </text>
               </g>
             ))}
@@ -574,7 +665,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   strokeWidth={3}
                   strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={0.95}
+                  opacity={0.7}
                 />
               );
             })}
@@ -620,20 +711,21 @@ export default function StepFareChart({ fareKind, series }: Props) {
           ) : null}
         </svg>
 
-        {zoomX ? (
-          <div className="pointer-events-auto absolute left-3 top-3 flex items-center gap-2">
-            <div className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm backdrop-blur">
-              拡大中: {zoomX.minKm.toFixed(2)}〜{zoomX.maxKm.toFixed(2)} km
-            </div>
+
+        <div className="pointer-events-auto absolute left-3 top-3 flex items-center gap-2">
+          <div className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm backdrop-blur">
+            {zoomX.minKm.toFixed(2)}〜{zoomX.maxKm.toFixed(2)} km
+          </div>
+          {!isDefaultView ? (
             <button
               type="button"
-              onClick={() => setZoomX(null)}
+              onClick={resetToDefaultView}
               className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm hover:bg-white backdrop-blur"
             >
               リセット
             </button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
 
         {series.length === 0 ? (
           <div className="absolute inset-0 grid place-items-center">
@@ -653,7 +745,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
               : `${hoverKm.toFixed(2)} km 時点（欠損は —）`}
           </div>
         </div>
-        <div className="flex max-h-[220px] flex-col gap-1 overflow-auto pr-1">
+        <div className="flex max-h-55 flex-col gap-1 overflow-auto pr-1">
           {hoverValues.map((v) => (
             <div
               key={v.id}
