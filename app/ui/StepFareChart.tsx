@@ -55,8 +55,19 @@ export default function StepFareChart({ fareKind, series }: Props) {
         startMinKm: number;
         startMaxKm: number;
       }
+    | {
+        kind: "pinch";
+        startDistPx: number;
+        startMidKm: number;
+        startMinKm: number;
+        startMaxKm: number;
+      }
     | null
   >(null);
+
+  const touchPointsRef = useRef<Map<number, { clientX: number; clientY: number }>>(
+    new Map()
+  );
 
   const [dims, setDims] = useState(() => ({
     w: 900,
@@ -224,6 +235,46 @@ export default function StepFareChart({ fareKind, series }: Props) {
     if (series.length === 0) return;
     const svg = svgRef.current;
     if (!svg) return;
+
+    if (e.pointerType === "touch") {
+      svg.setPointerCapture(e.pointerId);
+      touchPointsRef.current.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+      // Two-finger pinch anywhere => zoom (and pan) on X.
+      if (touchPointsRef.current.size >= 2) {
+        const pts = Array.from(touchPointsRef.current.values()).slice(0, 2);
+        const p1 = clientToSvg(pts[0].clientX, pts[0].clientY);
+        const p2 = clientToSvg(pts[1].clientX, pts[1].clientY);
+        if (p1 && p2) {
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.max(10, Math.hypot(dx, dy));
+          const midX = (p1.x + p2.x) / 2;
+          const midXInner = clamp(midX, dims.m.l, dims.w - dims.m.r);
+          const startMinKm = domain.minKm;
+          const startMaxKm = domain.maxKm;
+          const startSpan = startMaxKm - startMinKm;
+          const midKmRaw =
+            startSpan <= 0.001
+              ? (startMinKm + startMaxKm) / 2
+              : startMinKm + ((midXInner - dims.m.l) / innerW) * startSpan;
+          const midKm = clamp(midKmRaw, startMinKm, startMaxKm);
+
+          svg.setPointerCapture(e.pointerId);
+          setHoverKm(null);
+          setInteraction({
+            kind: "pinch",
+            startDistPx: dist,
+            startMidKm: midKm,
+            startMinKm,
+            startMaxKm,
+          });
+          e.preventDefault();
+          return;
+        }
+      }
+    }
+
     const p = clientToSvg(e.clientX, e.clientY);
     if (!p) return;
     const x = p.x;
@@ -245,6 +296,15 @@ export default function StepFareChart({ fareKind, series }: Props) {
     const wantsSelectZoom = e.shiftKey;
     const wantsXBandZoom = !e.shiftKey && inXAxisBand;
     const wantsPan = !wantsSelectZoom && !wantsXBandZoom && inPlotArea;
+
+    // Touch convenience: when not zoomed, a tap on the plot area sets the inspector target.
+    if (e.pointerType === "touch" && wantsPan && !canPan) {
+      setHoverZone("plot");
+      setHoverKm(fromX(xInner));
+      e.preventDefault();
+      return;
+    }
+
     if (wantsPan && !canPan) return;
     if (!wantsSelectZoom && !wantsXBandZoom && !wantsPan) return;
 
@@ -274,9 +334,52 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }
 
   function onPointerMove(e: PointerEvent<SVGSVGElement>) {
+    if (e.pointerType === "touch") {
+      const existing = touchPointsRef.current.get(e.pointerId);
+      if (existing) {
+        touchPointsRef.current.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+      }
+    }
+
     if (!interaction) return;
     const svg = svgRef.current;
     if (!svg) return;
+
+    if (interaction.kind === "pinch") {
+      if (touchPointsRef.current.size < 2) return;
+      const pts = Array.from(touchPointsRef.current.values()).slice(0, 2);
+      const p1 = clientToSvg(pts[0].clientX, pts[0].clientY);
+      const p2 = clientToSvg(pts[1].clientX, pts[1].clientY);
+      if (!p1 || !p2) return;
+
+      const dx = p1.x - p2.x;
+      const dy = p1.y - p2.y;
+      const dist = Math.max(10, Math.hypot(dx, dy));
+      const distFactor = interaction.startDistPx / dist; // pinch-out => zoom-in
+
+      const fullSpan = baseExtent.maxKm - baseExtent.minKm;
+      if (!Number.isFinite(fullSpan) || fullSpan <= 0.001) return;
+      const minSpan = Math.max(fullSpan / 500, 0.05);
+
+      const baseSpan = interaction.startMaxKm - interaction.startMinKm;
+      const nextSpan = clamp(baseSpan * distFactor, minSpan, fullSpan);
+
+      const midX = (p1.x + p2.x) / 2;
+      const midXInner = clamp(midX, dims.m.l, dims.w - dims.m.r);
+      // Pinch semantics:
+      // - The km under the midpoint of the two fingers (anchor) should stay the same while moving fingers.
+      // - The screen position of that midpoint can change (pan), so ratio must be derived from current midX.
+      const ratioNow = clamp((midXInner - dims.m.l) / innerW, 0, 1);
+      const anchorKm = interaction.startMidKm;
+
+      let nextMin = anchorKm - ratioNow * nextSpan;
+      nextMin = clamp(nextMin, baseExtent.minKm, baseExtent.maxKm - nextSpan);
+      setZoomX({ minKm: nextMin, maxKm: nextMin + nextSpan });
+
+      e.preventDefault();
+      return;
+    }
+
     const p = clientToSvg(e.clientX, e.clientY);
     if (!p) return;
     const x = p.x;
@@ -325,13 +428,23 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }
 
   function onPointerUp(e: PointerEvent<SVGSVGElement>) {
+    if (e.pointerType === "touch") {
+      touchPointsRef.current.delete(e.pointerId);
+    }
     if (!interaction) return;
+
     const svg = svgRef.current;
     if (svg) svg.releasePointerCapture(e.pointerId);
-    const startPx = interaction.startPx;
-    const endPx = interaction.currentPx;
     const kind = interaction.kind;
     setInteraction(null);
+
+    if (kind === "pinch") {
+      e.preventDefault();
+      return;
+    }
+
+    const startPx = interaction.startPx;
+    const endPx = interaction.currentPx;
 
     if (kind === "select") {
       if (Math.abs(endPx - startPx) < 10) return; // ignore tiny drags
@@ -343,6 +456,14 @@ export default function StepFareChart({ fareKind, series }: Props) {
       const clampedMax = clamp(maxKm, baseExtent.minKm, baseExtent.maxKm);
       if (clampedMax - clampedMin < 0.01) return;
       setZoomX({ minKm: clampedMin, maxKm: clampedMax });
+    }
+
+    // Touch convenience: a tap after a pan gesture updates the inspector target.
+    if (e.pointerType === "touch" && kind === "pan") {
+      if (Math.abs(endPx - startPx) < 8) {
+        setHoverZone("plot");
+        setHoverKm(fromX(endPx));
+      }
     }
     e.preventDefault();
   }
@@ -425,7 +546,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
           ref={svgRef}
           viewBox={`0 0 ${dims.w} ${dims.h}`}
           className={
-            "grow w-full select-none " +
+            "touch-none grow w-full select-none " +
             (hoverZone === "xband"
               ? "cursor-ew-resize"
               : hoverZone === "plot"
@@ -439,6 +560,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
           onDoubleClick={onDoubleClick}
           role="img"
           aria-label="運賃の距離別グラフ"
