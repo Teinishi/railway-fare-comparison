@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img">
+  <!-- Background -->
+  <rect x="8" y="8" width="496" height="496" rx="64" fill="#FAFAFA" stroke="#E4E4E7" stroke-width="16" />
+
+  <!-- Axes -->
+  <path d="M 96 112 V 416 H 400" stroke="#A1A1AA" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+  <!-- Step line -->
+  <path d="M 96 280 h 128 v -40 H 416" stroke="#10469c" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M 96 340 h 192 v -180 H 416" stroke="#518ded" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>
+
