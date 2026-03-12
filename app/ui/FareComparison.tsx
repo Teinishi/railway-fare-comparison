@@ -19,6 +19,7 @@ type FareTable = {
 
 type Company = {
   name: string;
+  note?: string;
   fareTables: FareTable[];
 };
 
@@ -29,7 +30,9 @@ type FareData = {
 type Series = {
   id: string;
   companyKey: string;
+  companyIndex: number;
   companyName: string;
+  tableIndex: number;
   tableName: string;
   note?: string;
   fares: FarePoint[];
@@ -137,7 +140,9 @@ export default function FareComparison() {
         series.push({
           id: `${companyIndex}:${tableIndex}`,
           companyKey,
+          companyIndex,
           companyName: company.name ?? companyKey,
+          tableIndex,
           tableName: table.name ?? `table${tableIndex}`,
           note: table.note,
           fares: table.fares,
@@ -179,14 +184,40 @@ export default function FareComparison() {
   }, [allSeries, selectedIds]);
 
   const selectedNotes = useMemo(() => {
-    return selectedSeries
-      .filter((s) => (s.note ?? "").trim().length > 0)
-      .map((s) => ({
-        id: s.id,
+    if (!data) return [];
+
+    const selectedCompanyIndexes = new Set<number>(
+      selectedSeries.map((s) => s.companyIndex)
+    );
+
+    const blocks: { id: string; title: string; note: string }[] = [];
+
+    // Company notes (data order)
+    for (let i = 0; i < data.companies.length; i++) {
+      if (!selectedCompanyIndexes.has(i)) continue;
+      const c = data.companies[i];
+      const note = (c.note ?? "").trim();
+      if (!note) continue;
+      blocks.push({
+        id: `company:${i}`,
+        title: c.name ?? `company${i}`,
+        note,
+      });
+    }
+
+    // Table notes (selection order)
+    for (const s of selectedSeries) {
+      const note = (s.note ?? "").trim();
+      if (!note) continue;
+      blocks.push({
+        id: `table:${s.id}`,
         title: `${s.companyName} / ${s.tableName}`,
-        note: s.note as string,
-      }));
-  }, [selectedSeries]);
+        note,
+      });
+    }
+
+    return blocks;
+  }, [data, selectedSeries]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, { companyName: string; items: Series[] }>();
@@ -289,21 +320,21 @@ export default function FareComparison() {
             {selectedNotes.length > 0 ? (
               <div className="rounded-2xl border border-zinc-200 bg-white p-4">
                 <div className="mb-2 text-sm font-semibold text-zinc-900">
-                  注記（選択中のみ）
+                  注記
                 </div>
                 <div className="flex flex-col gap-2">
                   {selectedNotes.map((n) => (
-                    <details
+                    <div
                       key={n.id}
                       className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
                     >
-                      <summary className="cursor-pointer text-sm font-medium text-zinc-900">
+                      <div className="text-sm font-medium text-zinc-900">
                         {n.title}
-                      </summary>
+                      </div>
                       <div className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-700">
                         {n.note}
                       </div>
-                    </details>
+                    </div>
                   ))}
                 </div>
               </div>
