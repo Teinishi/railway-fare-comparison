@@ -662,7 +662,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   opacity={0.7}
                 />
               );
-            })}
+            }).toReversed()}
           </g>
 
           {/* Hover crosshair */}

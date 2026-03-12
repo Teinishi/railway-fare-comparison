@@ -17,6 +17,7 @@ type FarePoint = {
 type FareTable = {
   name: string;
   note?: string;
+  color: string;
   fares: FarePoint[];
 };
 
@@ -124,7 +125,7 @@ export default function FareComparison() {
           tableName: table.name ?? `table${tableIndex}`,
           note: table.note,
           fares: table.fares,
-          color: COLOR_PALETTE[i % COLOR_PALETTE.length],
+          color: table.color,
         });
         i++;
       }
