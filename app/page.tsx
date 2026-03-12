@@ -15,7 +15,7 @@ export default function Home() {
         </div>
 
         {/* Client-side interactive UI */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="sm:rounded-2xl sm:border sm:border-zinc-200 sm:bg-white sm:p-4 sm:shadow-sm">
           {/* Lazy-loaded client component to keep server render simple */}
           {/**
            * next/dynamic is optional; plain import is fine too.
