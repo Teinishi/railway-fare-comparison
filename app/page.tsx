@@ -10,7 +10,7 @@ export default function Home() {
             鉄道運賃比較
           </h1>
           <p className="max-w-3xl text-sm leading-6 text-zinc-600">
-            運賃表を階段状のグラフとして比較します。
+            関東の鉄道各社の運賃表を階段状のグラフとして比較します。
           </p>
         </div>
 
