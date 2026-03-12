@@ -224,11 +224,11 @@ export default function FareComparison() {
 
   const selectedCount = selectedIds.size;
 
-  function toggleSeries(id: string) {
+  function changeSeries(checked: boolean, id: string) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (checked) next.add(id);
+      else next.delete(id);
       return next;
     });
   }
@@ -276,7 +276,7 @@ export default function FareComparison() {
           error={error}
           onSetAllVisible={setAllVisible}
           onSetCompanyVisible={setCompanyVisible}
-          onToggleSeries={toggleSeries}
+          onChangeSeries={changeSeries}
         />
 
         <div className="lg:col-start-1 rounded-2xl border border-zinc-200 bg-white p-4">

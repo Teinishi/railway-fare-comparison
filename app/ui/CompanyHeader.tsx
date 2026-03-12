@@ -2,24 +2,24 @@
 
 import { useEffect, useRef } from "react";
 
+type Props = {
+  companyKey: string;
+  companyName: string;
+  selectedItemCount: number;
+  allItemCount: number;
+  onChange: (checked: boolean) => void;
+};
+
 export default function CompanyHeader({
   companyKey,
   companyName,
-  items,
-  selectedIds,
+  selectedItemCount,
+  allItemCount,
   onChange,
-}: {
-  companyKey: string;
-  companyName: string;
-  items: { id: string }[];
-  selectedIds: Set<string>;
-  onChange: (checked: boolean) => void;
-}) {
+}: Props) {
   const ref = useRef<HTMLInputElement | null>(null);
-  const selectedInGroup = items.filter((it) => selectedIds.has(it.id)).length;
-  const all = items.length;
-  const checked = all > 0 && selectedInGroup === all;
-  const indeterminate = selectedInGroup > 0 && selectedInGroup < all;
+  const checked = allItemCount > 0 && selectedItemCount === allItemCount;
+  const indeterminate = selectedItemCount > 0 && selectedItemCount < allItemCount;
 
   useEffect(() => {
     if (!ref.current) return;
@@ -42,7 +42,7 @@ export default function CompanyHeader({
         </div>
       </div>
       <div className="text-[11px] tabular-nums text-zinc-600">
-        {selectedInGroup}/{all}
+        {selectedItemCount}/{allItemCount}
       </div>
     </label>
   );
