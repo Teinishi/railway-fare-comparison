@@ -86,7 +86,6 @@ export default function StepFareChart({ fareKind, series }: Props) {
       const rect = el.getBoundingClientRect();
       const w = Math.max(320, Math.round(rect.width));
       const h = Math.max(320, Math.round(rect.height));
-      console.log(w, h);
       setDims((prev) => {
         if (prev.w === w && prev.h === h) return prev;
         return { ...prev, w, h };

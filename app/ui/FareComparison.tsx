@@ -186,7 +186,7 @@ export default function FareComparison() {
       if (note) {
         blocks.push({
           id: `table:${s.id}`,
-          title: `${company.name} / ${s.tableName}`,
+          title: `${company.name} ${s.tableName}`,
           note,
         });
       }
@@ -261,7 +261,7 @@ export default function FareComparison() {
           <input
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
-            placeholder="会社名 / 路線名"
+            placeholder="会社・路線名"
             className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-zinc-300 focus:ring-2 sm:w-80"
           />
         </div>
