@@ -2,14 +2,18 @@
 
 import type { MouseEvent, PointerEvent } from "react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-
-type FareKind = "ic" | "ticket";
-
-type FarePoint = {
-  km: number;
-  ic: number;
-  ticket: number;
-};
+import type { FareKind, FarePoint } from "./stepFareChartMath";
+import {
+  buildNiceTicks,
+  buildStepPath,
+  clamp,
+  decimalsForStep,
+  fareAtDistance,
+  maxFareInRange,
+  niceCeil,
+  seriesVisibleExtent,
+} from "./stepFareChartMath";
+import ChartInspector from "./ChartInspector";
 
 type Series = {
   id: string;
@@ -23,187 +27,6 @@ type Props = {
   fareKind: FareKind;
   series: Series[];
 };
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function niceStep(rawStep: number) {
-  if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
-  const exp = Math.floor(Math.log10(rawStep));
-  const base = 10 ** exp;
-  const n = rawStep / base;
-  if (n <= 1) return 1 * base;
-  if (n <= 2) return 2 * base;
-  if (n <= 2.5) return 2.5 * base;
-  if (n <= 5) return 5 * base;
-  return 10 * base;
-}
-
-function decimalsForStep(step: number) {
-  if (!Number.isFinite(step) || step <= 0) return 0;
-  const s = step.toString();
-  if (s.includes("e-")) {
-    const [, exp] = s.split("e-");
-    return Math.min(6, Math.max(0, Number(exp) || 0));
-  }
-  const dot = s.indexOf(".");
-  if (dot === -1) return 0;
-  return Math.min(6, s.length - dot - 1);
-}
-
-function buildNiceTicks(min: number, max: number, targetCount: number) {
-  const span = max - min;
-  if (!Number.isFinite(span) || span <= 0) return { ticks: [min, max], step: 1 };
-
-  const rawStep = span / Math.max(1, targetCount - 1);
-  const step = niceStep(rawStep);
-  const first = Math.ceil(min / step) * step;
-  const last = Math.floor(max / step) * step;
-
-  const ticks: number[] = [];
-  if (Number.isFinite(first) && Number.isFinite(last) && first <= last) {
-    for (let v = first; v <= last + step * 1e-9; v += step) {
-      ticks.push(v);
-      if (ticks.length > 200) break;
-    }
-  }
-
-  if (ticks.length < 2) return { ticks: [min, max], step };
-  return { ticks, step };
-}
-
-function niceCeil(value: number) {
-  if (!Number.isFinite(value) || value <= 0) return 0;
-  const exp = Math.floor(Math.log10(value));
-  const base = 10 ** exp;
-  const n = value / base;
-  if (n <= 1) return base;
-  if (n <= 1.2) return 1.2 * base;
-  if (n <= 1.5) return 1.5 * base;
-  return Math.ceil(n) * base;
-}
-
-function fareValue(row: FarePoint, kind: FareKind): number | null {
-  const v = kind === "ic" ? row.ic : row.ticket;
-  return Number.isFinite(v) ? v : null;
-}
-
-function seriesVisibleExtent(
-  fares: FarePoint[],
-  kind: FareKind
-): { startKm: number; endKm: number } | null {
-  let firstIndex = -1;
-  let lastIndex = -1;
-
-  for (let i = 0; i < fares.length; i++) {
-    if (fareValue(fares[i], kind) !== null) {
-      firstIndex = i;
-      break;
-    }
-  }
-  for (let i = fares.length - 1; i >= 0; i--) {
-    if (fareValue(fares[i], kind) !== null) {
-      lastIndex = i;
-      break;
-    }
-  }
-
-  if (firstIndex === -1 || lastIndex === -1) return null;
-
-  const prevKm = firstIndex === 0 ? 0 : fares[firstIndex - 1]?.km;
-  const startKm = Number.isFinite(prevKm) ? prevKm : 0;
-  const endKm = fares[lastIndex]?.km;
-  if (!Number.isFinite(endKm)) return null;
-  return { startKm, endKm };
-}
-
-function maxFareInRange(
-  fares: FarePoint[],
-  kind: FareKind,
-  minKm: number,
-  maxKm: number
-): number | null {
-  let max = -Infinity;
-  for (let i = 0; i < fares.length; i++) {
-    const row = fares[i];
-    if (!Number.isFinite(row.km)) continue;
-    const v = fareValue(row, kind);
-    if (v === null) continue;
-
-    const bracketStart = i === 0 ? 0 : fares[i - 1]?.km;
-    const start = Number.isFinite(bracketStart) ? bracketStart : 0;
-    const end = row.km;
-
-    // Any overlap with [minKm, maxKm] counts.
-    if (end < minKm || start > maxKm) continue;
-    if (v > max) max = v;
-  }
-  return Number.isFinite(max) ? max : null;
-}
-
-function fareAtDistance(
-  fares: FarePoint[],
-  km: number,
-  kind: FareKind
-): number | null {
-  for (const row of fares) {
-    if (km <= row.km) {
-      const v = fareValue(row, kind);
-      if (v !== null) return v;
-      // If this bracket is missing a value, keep searching for the first
-      // bracket (at/after this distance) with a defined fare.
-    }
-  }
-  for (let i = fares.length - 1; i >= 0; i--) {
-    const v = fareValue(fares[i], kind);
-    if (v !== null) return v;
-  }
-  return null;
-}
-
-function buildStepPath(
-  fares: FarePoint[],
-  kind: FareKind,
-  toX: (km: number) => number,
-  toY: (yen: number) => number
-) {
-  if (!fares.length) return "";
-  let d = "";
-  let hasActiveSegment = false;
-
-  for (let i = 0; i < fares.length; i++) {
-    const row = fares[i];
-    if (!Number.isFinite(row.km)) continue;
-    const v = fareValue(row, kind);
-    if (v === null) {
-      hasActiveSegment = false;
-      continue;
-    }
-
-    const startKm = i === 0 ? 0 : fares[i - 1]?.km ?? 0;
-    const endKm = row.km;
-    const y = toY(v);
-
-    if (!hasActiveSegment) {
-      d += `M ${toX(startKm)} ${y}`;
-      hasActiveSegment = true;
-    }
-    d += ` L ${toX(endKm)} ${y}`;
-
-    const next = fares[i + 1];
-    if (next) {
-      const nextV = fareValue(next, kind);
-      if (nextV !== null) {
-        d += ` L ${toX(endKm)} ${toY(nextV)}`;
-      } else {
-        hasActiveSegment = false;
-      }
-    }
-  }
-
-  return d;
-}
 
 export default function StepFareChart({ fareKind, series }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -332,12 +155,15 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
   const hoverValues = useMemo(() => {
     const km = hoverKm === null ? null : clamp(hoverKm, domain.minKm, domain.maxKm);
-    return series.map((s) => ({
-      id: s.id,
-      label: `${s.companyName} / ${s.tableName}`,
-      color: s.color,
-      yen: km === null ? null : fareAtDistance(s.fares, km, fareKind),
-    }));
+    return series.map((s) => {
+      const yen = km && fareAtDistance(s.fares, km, fareKind);
+      return {
+        id: s.id,
+        label: `${s.companyName} / ${s.tableName}`,
+        color: s.color,
+        value: yen !== null ? `${yen}円` : null,
+      };
+    });
   }, [domain.maxKm, domain.minKm, fareKind, hoverKm, series]);
 
   function onMouseMove(e: MouseEvent<SVGSVGElement>) {
@@ -736,40 +562,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-3">
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <div className="text-xs font-semibold text-zinc-900">インスペクタ</div>
-          <div className="text-[11px] text-zinc-600">
-            {hoverKm === null
-              ? "ホバーで金額表示"
-              : `${hoverKm.toFixed(2)} km 時点（欠損は —）`}
-          </div>
-        </div>
-        <div className="flex max-h-55 flex-col gap-1 overflow-auto pr-1">
-          {hoverValues.map((v) => (
-            <div
-              key={v.id}
-              className="flex items-center gap-2 rounded-lg bg-zinc-50 px-2.5 py-1.5 text-xs"
-            >
-              <span
-                className="inline-block h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: v.color }}
-              />
-              <div className="min-w-0 flex-1 truncate text-zinc-700">
-                {v.label}
-              </div>
-              <div className="tabular-nums text-zinc-950">
-                {v.yen === null ? "—" : `${v.yen}円`}
-              </div>
-            </div>
-          ))}
-          {hoverValues.length === 0 ? (
-            <div className="text-xs text-zinc-600">
-              表示する路線を選択してください
-            </div>
-          ) : null}
-        </div>
-      </div>
+      <ChartInspector message={hoverKm === null ? "グラフにホバーで金額表示" : `${hoverKm.toFixed(2)} km`} hoverValues={hoverValues}/>
     </div>
   );
 }
