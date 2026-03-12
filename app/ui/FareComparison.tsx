@@ -13,27 +13,25 @@ type FarePoint = {
 
 type FareTable = {
   name: string;
-  description?: string;
+  note?: string;
   fares: FarePoint[];
 };
 
 type Company = {
   name: string;
-  description?: string;
-  fareTables: Record<string, FareTable>;
+  fareTables: FareTable[];
 };
 
 type FareData = {
-  companies: Record<string, Company>;
+  companies: Company[];
 };
 
 type Series = {
   id: string;
   companyKey: string;
   companyName: string;
-  tableKey: string;
   tableName: string;
-  description?: string;
+  note?: string;
   fares: FarePoint[];
   color: string;
 };
@@ -52,18 +50,14 @@ const COLOR_PALETTE = [
   "#06B6D4", // cyan-500
 ];
 
-function stableSeriesId(companyKey: string, tableKey: string) {
-  return `${companyKey}:${tableKey}`;
-}
-
 function normalizeFareData(raw: unknown): FareData {
   if (typeof raw !== "object" || raw === null) {
     throw new Error("fare_data.json: root must be an object");
   }
   const root = raw as Record<string, unknown>;
   const companies = root.companies;
-  if (typeof companies !== "object" || companies === null) {
-    throw new Error("fare_data.json: companies must be an object");
+  if (!Array.isArray(companies)) {
+    throw new Error("fare_data.json: companies must be an array");
   }
   return raw as FareData;
 }
@@ -133,30 +127,25 @@ export default function FareComparison() {
     const series: Series[] = [];
     let i = 0;
 
-    for (const [companyKey, company] of Object.entries(data.companies)) {
-      if (!company?.fareTables) continue;
-      for (const [tableKey, table] of Object.entries(company.fareTables)) {
+    for (let companyIndex = 0; companyIndex < data.companies.length; companyIndex++) {
+      const company = data.companies[companyIndex];
+      if (!company?.fareTables?.length) continue;
+      const companyKey = `c${companyIndex}`;
+      for (let tableIndex = 0; tableIndex < company.fareTables.length; tableIndex++) {
+        const table = company.fareTables[tableIndex];
         if (!table?.fares?.length) continue;
         series.push({
-          id: stableSeriesId(companyKey, tableKey),
+          id: `${companyIndex}:${tableIndex}`,
           companyKey,
           companyName: company.name ?? companyKey,
-          tableKey,
-          tableName: table.name ?? tableKey,
-          description: table.description,
+          tableName: table.name ?? `table${tableIndex}`,
+          note: table.note,
           fares: table.fares,
           color: COLOR_PALETTE[i % COLOR_PALETTE.length],
         });
         i++;
       }
     }
-
-    // Stable-ish order for UX: by companyKey then tableKey.
-    series.sort((a, b) => {
-      const c = a.companyKey.localeCompare(b.companyKey);
-      if (c !== 0) return c;
-      return a.tableKey.localeCompare(b.tableKey);
-    });
 
     return series;
   }, [data]);
@@ -178,7 +167,7 @@ export default function FareComparison() {
     const q = filterText.trim().toLowerCase();
     if (!q) return allSeries;
     return allSeries.filter((s) => {
-      const hay = `${s.companyName} ${s.tableName} ${s.description ?? ""}`.toLowerCase();
+      const hay = `${s.companyName} ${s.tableName}`.toLowerCase();
       return hay.includes(q);
     });
   }, [allSeries, filterText]);
@@ -188,6 +177,16 @@ export default function FareComparison() {
     // Keep selection order consistent with allSeries
     return selected;
   }, [allSeries, selectedIds]);
+
+  const selectedNotes = useMemo(() => {
+    return selectedSeries
+      .filter((s) => (s.note ?? "").trim().length > 0)
+      .map((s) => ({
+        id: s.id,
+        title: `${s.companyName} / ${s.tableName}`,
+        note: s.note as string,
+      }));
+  }, [selectedSeries]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, { companyName: string; items: Series[] }>();
@@ -282,15 +281,38 @@ export default function FareComparison() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
-            <StepFareChart fareKind={fareKind} series={selectedSeries} />
-          </div>
-
-          <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-            <div className="mb-2 text-sm font-semibold text-zinc-900">
-              注意事項
+          <div className="flex flex-col gap-4">
+            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
+              <StepFareChart fareKind={fareKind} series={selectedSeries} />
             </div>
+
+            {selectedNotes.length > 0 ? (
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                <div className="mb-2 text-sm font-semibold text-zinc-900">
+                  注記（選択中のみ）
+                </div>
+                <div className="flex flex-col gap-2">
+                  {selectedNotes.map((n) => (
+                    <details
+                      key={n.id}
+                      className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
+                    >
+                      <summary className="cursor-pointer text-sm font-medium text-zinc-900">
+                        {n.title}
+                      </summary>
+                      <div className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-700">
+                        {n.note}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="mb-2 text-sm font-semibold text-zinc-900">
+                注意事項
+              </div>
             <ul className="mb-3 list-disc pl-5 text-sm leading-6 text-zinc-700">
               <li>
                 表示は比較・学習用途です。実際の運賃は各社の最新の運賃表や経路に従って確認してください。
@@ -356,7 +378,7 @@ export default function FareComparison() {
                   </div>
                 </div>
 
-                <div className="flex max-h-[520px] flex-col gap-4 overflow-auto pr-1">
+                <div className="flex max-h-130 flex-col gap-4 overflow-auto pr-1">
                   {grouped.map((g) => (
                     <div key={g.companyKey} className="flex flex-col gap-2">
                       <CompanyHeader
@@ -389,11 +411,6 @@ export default function FareComparison() {
                                 {s.tableName}
                               </div>
                             </div>
-                            {s.description ? (
-                              <div className="mt-1 max-h-10 overflow-hidden text-xs leading-5 text-zinc-600">
-                                {s.description}
-                              </div>
-                            ) : null}
                           </div>
                         </label>
                       ))}
