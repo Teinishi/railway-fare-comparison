@@ -29,6 +29,7 @@ type Props = {
 };
 
 export default function StepFareChart({ fareKind, series }: Props) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const clipId = useId();
   const [hoverKm, setHoverKm] = useState<number | null>(null);
@@ -57,7 +58,34 @@ export default function StepFareChart({ fareKind, series }: Props) {
     | null
   >(null);
 
-  const dims = useMemo(() => ({ w: 900, h: 480, m: { l: 80, r: 40, t: 40, b: 20 } }), []);
+  const [dims, setDims] = useState(() => ({
+    w: 900,
+    h: 480,
+    m: { l: 64, r: 24, t: 16, b: 32 },
+  }));
+
+  // Make the viewBox match the rendered size so the content actually uses the extra height on mobile.
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const w = Math.max(320, Math.round(rect.width));
+      const h = Math.max(320, Math.round(rect.height));
+      console.log(w, h);
+      setDims((prev) => {
+        if (prev.w === w && prev.h === h) return prev;
+        return { ...prev, w, h };
+      });
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const innerW = dims.w - dims.m.l - dims.m.r;
   const innerH = dims.h - dims.m.t - dims.m.b;
   const plotRect = {
@@ -374,12 +402,30 @@ export default function StepFareChart({ fareKind, series }: Props) {
         </div>
       </div>
 
-      <div className="relative">
+      <div
+        ref={containerRef}
+        className="relative flex flex-col min-h-105 sm:h-105 sm:min-h-0 rounded-xl bg-white"
+      >
+        <div className="m-3 pointer-events-auto flex items-center gap-2">
+          <div className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm backdrop-blur">
+            {zoomX.minKm.toFixed(2)}〜{zoomX.maxKm.toFixed(2)} km
+          </div>
+          {!isDefaultView ? (
+            <button
+              type="button"
+              onClick={resetToDefaultView}
+              className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm hover:bg-white backdrop-blur"
+            >
+              リセット
+            </button>
+          ) : null}
+        </div>
+
         <svg
           ref={svgRef}
           viewBox={`0 0 ${dims.w} ${dims.h}`}
           className={
-            "h-105 w-full select-none rounded-xl bg-white " +
+            "grow w-full select-none " +
             (hoverZone === "xband"
               ? "cursor-ew-resize"
               : hoverZone === "plot"
@@ -456,7 +502,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   x={toX(t)}
                   y={dims.h - dims.m.b + 22}
                   textAnchor="middle"
-                  fontSize={16}
+                  fontSize={12}
                   fill="#52525B"
                 >
                   {t.toFixed(decimalsForStep(ticks.xStep))}km
@@ -469,7 +515,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   x={dims.m.l - 10}
                   y={toY(t) + 4}
                   textAnchor="end"
-                  fontSize={16}
+                  fontSize={12}
                   fill="#52525B"
                 >
                   {Math.round(t)}円
@@ -537,26 +583,10 @@ export default function StepFareChart({ fareKind, series }: Props) {
           ) : null}
         </svg>
 
-
-        <div className="pointer-events-auto absolute left-3 top-3 flex items-center gap-2">
-          <div className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm backdrop-blur">
-            {zoomX.minKm.toFixed(2)}〜{zoomX.maxKm.toFixed(2)} km
-          </div>
-          {!isDefaultView ? (
-            <button
-              type="button"
-              onClick={resetToDefaultView}
-              className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm hover:bg-white backdrop-blur"
-            >
-              リセット
-            </button>
-          ) : null}
-        </div>
-
         {series.length === 0 ? (
-          <div className="absolute inset-0 grid place-items-center">
+          <div className="absolute inset-0 top-7.5 grid place-items-center">
             <div className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
-              右の一覧で表示する路線を選択してください
+              表示する路線を選択してください
             </div>
           </div>
         ) : null}
