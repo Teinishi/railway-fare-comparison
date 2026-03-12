@@ -43,7 +43,7 @@ type Series = {
   color: string;
 };
 
-const COLOR_PALETTE = [
+/*const COLOR_PALETTE = [
   "#0EA5E9", // sky-500
   "#F97316", // orange-500
   "#22C55E", // green-500
@@ -55,7 +55,7 @@ const COLOR_PALETTE = [
   "#F43F5E", // rose-500
   "#84CC16", // lime-500
   "#06B6D4", // cyan-500
-];
+];*/
 
 function normalizeFareData(raw: unknown): FareData {
   if (typeof raw !== "object" || raw === null) {
@@ -107,7 +107,6 @@ export default function FareComparison() {
   const allSeries = useMemo<Series[]>(() => {
     if (!data) return [];
     const series: Series[] = [];
-    let i = 0;
 
     for (let companyIndex = 0; companyIndex < data.companies.length; companyIndex++) {
       const company = data.companies[companyIndex];
@@ -127,7 +126,6 @@ export default function FareComparison() {
           fares: table.fares,
           color: table.color,
         });
-        i++;
       }
     }
 

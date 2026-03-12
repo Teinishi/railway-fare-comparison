@@ -33,6 +33,8 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const clipId = useId();
   const [hoverKm, setHoverKm] = useState<number | null>(null);
+  const [hoverSeriesId, setHoverSeriesId] = useState<string | null>(null);
+  const [pinnedSeriesId, setPinnedSeriesId] = useState<string | null>(null);
   const DEFAULT_X_RANGE_KM = 50;
   const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number }>(() => ({
     minKm: 0,
@@ -195,15 +197,36 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const hoverValues = useMemo(() => {
     const km = hoverKm === null ? null : clamp(hoverKm, domain.minKm, domain.maxKm);
     return series.map((s) => {
-      const yen = km && fareAtDistance(s.fares, km, fareKind);
+      const yen = km === null ? null : fareAtDistance(s.fares, km, fareKind);
       return {
         id: s.id,
         label: `${s.companyName} / ${s.tableName}`,
         color: s.color,
-        value: yen !== null ? `${yen}円` : null,
+        value: yen,
+        unit: "円",
       };
     });
   }, [domain.maxKm, domain.minKm, fareKind, hoverKm, series]);
+
+  // Avoid setState in an effect here: React can warn about cascading renders.
+  // Instead, treat ids that are not present in `series` as inactive.
+  const pinnedId = useMemo(
+    () => (pinnedSeriesId && series.some((s) => s.id === pinnedSeriesId) ? pinnedSeriesId : null),
+    [pinnedSeriesId, series]
+  );
+  const hoverId = useMemo(
+    () => (hoverSeriesId && series.some((s) => s.id === hoverSeriesId) ? hoverSeriesId : null),
+    [hoverSeriesId, series]
+  );
+
+  const activeSeriesId = pinnedId ?? hoverId;
+
+  const seriesForRender = useMemo(() => {
+    if (!activeSeriesId) return series;
+    const idx = series.findIndex((s) => s.id === activeSeriesId);
+    if (idx < 0) return series;
+    return [...series.slice(0, idx), ...series.slice(idx + 1), series[idx]];
+  }, [activeSeriesId, series]);
 
   function onMouseMove(e: MouseEvent<SVGSVGElement>) {
     if (interaction) return;
@@ -224,11 +247,33 @@ export default function StepFareChart({ fareKind, series }: Props) {
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
     const km = fromX(xInner);
     setHoverKm(km);
+
+    if (!pinnedId && inPlotArea) {
+      let bestId: string | null = null;
+      let bestDist = Infinity;
+      for (const s of series) {
+        const yen = fareAtDistance(s.fares, km, fareKind);
+        if (yen === null) continue;
+        const yy = toY(yen);
+        const d = Math.abs(yy - y);
+        if (d < bestDist) {
+          bestDist = d;
+          bestId = s.id;
+        }
+      }
+      if (bestDist > 20) {
+        bestId = null;
+      }
+      setHoverSeriesId(bestId);
+    } else if (!pinnedId) {
+      setHoverSeriesId(null);
+    }
   }
 
   function onMouseLeave() {
     setHoverKm(null);
     setHoverZone("none");
+    if (!pinnedId) setHoverSeriesId(null);
   }
 
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
@@ -310,6 +355,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
     svg.setPointerCapture(e.pointerId);
     setHoverKm(null);
+    if (!pinnedId) setHoverSeriesId(null);
 
     if (wantsSelectZoom) {
       setInteraction({ kind: "select", startPx: xInner, currentPx: xInner });
@@ -648,7 +694,9 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
           {/* Series */}
           <g clipPath={`url(#${clipId})`}>
-            {series.map((s) => {
+            {seriesForRender.map((s) => {
+              const isActive = activeSeriesId !== null && s.id === activeSeriesId;
+              const isDim = activeSeriesId !== null && s.id !== activeSeriesId;
               const d = buildStepPath(s.fares, fareKind, toX, toY);
               return (
                 <path
@@ -656,13 +704,13 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   d={d}
                   fill="none"
                   stroke={s.color}
-                  strokeWidth={3}
+                  strokeWidth={isActive ? 4 : isDim ? 2 : 3}
                   strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={0.7}
+                  opacity={isActive ? 0.95 : isDim ? 0.15 : 0.7}
                 />
               );
-            }).toReversed()}
+            })}
           </g>
 
           {/* Hover crosshair */}
@@ -718,6 +766,15 @@ export default function StepFareChart({ fareKind, series }: Props) {
         message={hoverKm === null ? "グラフにホバーで金額表示" : `${hoverKm.toFixed(2)} km`}
         hoverValues={hoverValues}
         noValuesMessage="表示する路線を選択してください"
+        activeId={activeSeriesId}
+        pinnedId={pinnedId}
+        onHoverId={(id) => {
+          if (pinnedId) return;
+          setHoverSeriesId(id);
+        }}
+        onTogglePin={(id) => {
+          setPinnedSeriesId((prev) => (prev === id ? null : id));
+        }}
       />
     </div>
   );
