@@ -88,7 +88,12 @@ export default function FareComparison() {
     async function load() {
       try {
         setError(null);
-        const res = await fetch("/data/fare_data.json", { cache: "force-cache" });
+        // GitHub Pages is typically served under a subpath (e.g. /repo-name/),
+        // so avoid absolute paths like "/data/..." which point to the domain root.
+        const basePath = window.location.pathname.endsWith("/")
+          ? window.location.pathname
+          : window.location.pathname + "/";
+        const res = await fetch(`${basePath}data/fare_data.json`, { cache: "force-cache" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as unknown;
         const normalized = normalizeFareData(json);

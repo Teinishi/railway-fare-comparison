@@ -2,6 +2,8 @@
 
 鉄道各社の距離別運賃をインタラクティブにグラフで比較できる非公式ツール
 
+[使ってみる](https://teinishi.github.io/railway-fare-comparison/)
+
 ## 注意事項
 
 - 運賃表データ (public/data/fare_data.json) は各社の旅客営業規則、ICカード乗車券取扱規則等を基に作成したものです。手作業で収集しているため、情報が正確でない場合があります。
