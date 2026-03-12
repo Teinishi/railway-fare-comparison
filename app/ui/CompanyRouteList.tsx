@@ -87,7 +87,7 @@ export default function CompanyRouteList({
                     onChange={(checked) => onSetCompanyVisible(g.companyKey, checked)}
                   />
 
-                  <div className="mt-2 ml-4 flex flex-col">
+                  <div className="mt-2 ml-3 flex flex-col">
                     {g.items.map((s, idx) => {
                       const isLast = idx === g.items.length - 1;
 

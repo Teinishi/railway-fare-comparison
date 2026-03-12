@@ -161,34 +161,33 @@ export default function FareComparison() {
   const selectedNotes = useMemo(() => {
     if (!data) return [];
 
-    const selectedCompanyIndexes = new Set<number>(
-      selectedSeries.map((s) => s.companyIndex)
-    );
-
     const blocks: NoteBlock[] = [];
+    const addedCompanyIndices = new Set<number>();
 
-    // Company notes (data order)
-    for (let i = 0; i < data.companies.length; i++) {
-      if (!selectedCompanyIndexes.has(i)) continue;
-      const c = data.companies[i];
-      const note = (c.note ?? "").trim();
-      if (!note) continue;
-      blocks.push({
-        id: `company:${i}`,
-        title: c.name ?? `company${i}`,
-        note,
-      });
-    }
-
-    // Table notes (selection order)
     for (const s of selectedSeries) {
+      const { companyIndex } = s;
+      const company = data.companies[companyIndex];
+
+      if (!addedCompanyIndices.has(companyIndex)) {
+        const note = (company.note ?? "").trim();
+        if (note) {
+          blocks.push({
+            id: `company:${companyIndex}`,
+            title: company.name,
+            note,
+          });
+        }
+        addedCompanyIndices.add(companyIndex);
+      }
+
       const note = (s.note ?? "").trim();
-      if (!note) continue;
-      blocks.push({
-        id: `table:${s.id}`,
-        title: `${s.companyName} / ${s.tableName}`,
-        note,
-      });
+      if (note) {
+        blocks.push({
+          id: `table:${s.id}`,
+          title: `${company.name} / ${s.tableName}`,
+          note,
+        });
+      }
     }
 
     return blocks;
@@ -253,6 +252,8 @@ export default function FareComparison() {
           <StepFareChart fareKind={fareKind} series={selectedSeries} />
         </div>
 
+        <SelectedNotesPanel blocks={selectedNotes} className="min-w-0" />
+
         <div className="lg:row-start-1 lg:col-start-2 flex flex-col gap-1">
           <div className="text-sm font-medium text-zinc-900">検索</div>
           <input
@@ -275,11 +276,7 @@ export default function FareComparison() {
           onToggleSeries={toggleSeries}
         />
 
-        <div>
-          <SelectedNotesPanel blocks={selectedNotes} />
-        </div>
-
-        <div className="lg:col-start-1 lg:row-start-4 rounded-2xl border border-zinc-200 bg-white p-4">
+        <div className="lg:col-start-1 rounded-2xl border border-zinc-200 bg-white p-4">
           <div className="mb-2 text-sm font-semibold text-zinc-900">
             注意事項
           </div>
