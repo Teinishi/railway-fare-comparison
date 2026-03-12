@@ -17,7 +17,7 @@ export default function SelectedNotesPanel({ blocks }: { blocks: NoteBlock[] }) 
             className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
           >
             <div className="text-sm font-medium text-zinc-900">{n.title}</div>
-            <div className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-zinc-700">
+            <div className="mt-2 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-zinc-700">
               {n.note}
             </div>
           </div>

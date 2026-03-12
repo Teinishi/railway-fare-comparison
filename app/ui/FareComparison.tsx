@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import StepFareChart from "./StepFareChart";
-import CompanyHeader from "./CompanyHeader";
 import SelectedNotesPanel, { type NoteBlock } from "./SelectedNotesPanel";
 import FareKindSelect from "./FareKindSelect";
+import CompanyRouteList from "./CompanyRouteList";
 
 type FareKind = "ic" | "ticket";
 
@@ -263,95 +263,23 @@ export default function FareComparison() {
           />
         </div>
 
-        <aside className="lg:row-start-2 lg:col-start-2 flex flex-col gap-4 lg:w-85 lg:flex-none">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-            <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-semibold text-zinc-900">
-                表示する会社・路線
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAllVisible(true)}
-                  className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50"
-                >
-                  全てON
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAllVisible(false)}
-                  className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50"
-                >
-                  全てOFF
-                </button>
-              </div>
-            </div>
-
-            {error ? (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                <code>fare_data.json</code> の読み込みに失敗しました: {error}
-              </div>
-            ) : null}
-
-            {!data && !error ? (
-              <div className="text-sm text-zinc-600">データ読み込み中…</div>
-            ) : null}
-
-            {data ? (
-              <div className="flex flex-col gap-4">
-                <div className="text-xs text-zinc-600">
-                  選択中: {selectedCount} 件
-                </div>
-
-                <div className="flex lg:max-h-150 flex-col gap-4 overflow-auto pr-1">
-                  {grouped.map((g) => (
-                    <div key={g.companyKey} className="flex flex-col gap-2">
-                      <CompanyHeader
-                        companyKey={g.companyKey}
-                        companyName={g.companyName}
-                        items={g.items}
-                        selectedIds={selectedIds}
-                        onChange={(checked) =>
-                          setCompanyVisible(g.companyKey, checked)
-                        }
-                      />
-                      {g.items.map((s) => (
-                        <label
-                          key={s.id}
-                          className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-2.5 hover:bg-zinc-100/50"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedIds.has(s.id)}
-                            onChange={() => toggleSeries(s.id)}
-                            className="mt-1 h-4 w-4 accent-zinc-900"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className="inline-block h-2.5 w-2.5 rounded-full"
-                                style={{ backgroundColor: s.color }}
-                              />
-                              <div className="truncate text-sm font-medium text-zinc-900 wrap-break-word">
-                                {s.tableName}
-                              </div>
-                            </div>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </aside>
+        <CompanyRouteList
+          className="lg:row-start-2 lg:col-start-2 lg:w-85 lg:flex-none"
+          grouped={grouped}
+          selectedIds={selectedIds}
+          selectedCount={selectedCount}
+          isLoading={!data && !error}
+          error={error}
+          onSetAllVisible={setAllVisible}
+          onSetCompanyVisible={setCompanyVisible}
+          onToggleSeries={toggleSeries}
+        />
 
         <div>
           <SelectedNotesPanel blocks={selectedNotes} />
         </div>
 
-        <div className="lg:col-start1 lg:row-start-4 rounded-2xl border border-zinc-200 bg-white p-4">
+        <div className="lg:col-start-1 lg:row-start-4 rounded-2xl border border-zinc-200 bg-white p-4">
           <div className="mb-2 text-sm font-semibold text-zinc-900">
             注意事項
           </div>
