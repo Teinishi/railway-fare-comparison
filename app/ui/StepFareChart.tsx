@@ -562,7 +562,11 @@ export default function StepFareChart({ fareKind, series }: Props) {
         ) : null}
       </div>
 
-      <ChartInspector message={hoverKm === null ? "グラフにホバーで金額表示" : `${hoverKm.toFixed(2)} km`} hoverValues={hoverValues}/>
+      <ChartInspector
+        message={hoverKm === null ? "グラフにホバーで金額表示" : `${hoverKm.toFixed(2)} km`}
+        hoverValues={hoverValues}
+        noValuesMessage="表示する路線を選択してください"
+      />
     </div>
   );
 }

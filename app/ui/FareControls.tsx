@@ -14,7 +14,7 @@ export default function FareControls({
   onChangeFilterText: (next: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       <div className="flex flex-col gap-1">
         <div className="text-sm font-medium text-zinc-900">運賃種別</div>
         <div className="inline-flex w-fit rounded-full border border-zinc-200 bg-zinc-50 p-1">

@@ -6,10 +6,10 @@ export default function Home() {
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <div className="mb-8 flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            鉄道運賃制度の比較
+            鉄道運賃比較
           </h1>
           <p className="max-w-3xl text-sm leading-6 text-zinc-600">
-            距離（km）に応じて階段状に変化する運賃テーブルを、グラフで重ねて比較します。
+            運賃表を階段状のグラフとして比較します。
           </p>
         </div>
 

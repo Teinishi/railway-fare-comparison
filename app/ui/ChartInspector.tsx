@@ -1,5 +1,6 @@
 type Props = {
   message: string;
+  noValuesMessage: string;
   hoverValues: {
     id: string;
     label: string;
@@ -8,7 +9,7 @@ type Props = {
   }[]
 };
 
-export default function ChartInspector({ message, hoverValues }: Props) {
+export default function ChartInspector({ message, noValuesMessage, hoverValues }: Props) {
   return (
       <div className="rounded-xl border border-zinc-200 bg-white p-3">
       <div className="mb-2 flex items-center justify-between gap-3">
@@ -37,7 +38,7 @@ export default function ChartInspector({ message, hoverValues }: Props) {
         ))}
         {hoverValues.length === 0 ? (
           <div className="text-xs text-zinc-600">
-            表示する路線を選択してください
+            {noValuesMessage}
           </div>
         ) : null}
       </div>
