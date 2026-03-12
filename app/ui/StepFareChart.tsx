@@ -367,7 +367,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="text-sm font-semibold text-zinc-900">運賃グラフ</div>
         <div className="text-xs text-zinc-600">
           横軸: 距離(km) / 縦軸: 金額(円)

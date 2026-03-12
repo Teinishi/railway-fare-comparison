@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import StepFareChart from "./StepFareChart";
 import CompanyHeader from "./CompanyHeader";
-import FareControls from "./FareControls";
 import SelectedNotesPanel, { type NoteBlock } from "./SelectedNotesPanel";
+import FareKindSelect from "./FareKindSelect";
 
 type FareKind = "ic" | "ticket";
 
@@ -244,45 +244,28 @@ export default function FareComparison() {
 
   return (
     <div className="flex flex-col gap-6">
-      <FareControls
-        fareKind={fareKind}
-        onChangeFareKind={setFareKind}
-        filterText={filterText}
-        onChangeFilterText={setFilterText}
-      />
-
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-          <div className="flex flex-col gap-4">
-            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
-              <StepFareChart fareKind={fareKind} series={selectedSeries} />
-            </div>
-
-            <SelectedNotesPanel blocks={selectedNotes} />
-
-            <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-              <div className="mb-2 text-sm font-semibold text-zinc-900">
-                注意事項
-              </div>
-            <ul className="mb-3 list-disc pl-5 text-sm leading-6 text-zinc-700">
-              <li>
-                運賃表データは各社の旅客営業規則、ICカード乗車券取扱規則等から手作業で収集しているため、情報が正確でない場合があります。
-              </li>
-              <li>
-                2026年3月現在の情報です。運賃改定などにより最新の情報でない場合があります。
-              </li>
-              <li>
-                営業キロに基づく大人片道普通旅客運賃を表示しています。加算運賃・特例・乗継割引などは別途考慮が必要です。
-              </li>
-              <li>
-                実際の運賃は各社の最新の運賃表や経路に従って確認してください。
-              </li>
-            </ul>
-          </div>
+        <div className="lg:row-start-1 lg:col-start-1">
+          <FareKindSelect fareKind={fareKind} onChangeFareKind={setFareKind} />
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="lg:row-start-2 lg:col-start-1 rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
+          <StepFareChart fareKind={fareKind} series={selectedSeries} />
+        </div>
+
+        <div className="lg:row-start-1 lg:col-start-2 flex flex-col gap-1">
+          <div className="text-sm font-medium text-zinc-900">検索</div>
+          <input
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            placeholder="会社名 / 路線名"
+            className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-zinc-300 focus:ring-2 sm:w-80"
+          />
+        </div>
+
+        <aside className="lg:row-start-2 lg:col-start-2 flex flex-col gap-4 lg:w-85 lg:flex-none">
           <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-            <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm font-semibold text-zinc-900">
                 表示する会社・路線
               </div>
@@ -320,7 +303,7 @@ export default function FareComparison() {
                   選択中: {selectedCount} 件
                 </div>
 
-                <div className="flex max-h-130 flex-col gap-4 overflow-auto pr-1">
+                <div className="flex lg:max-h-150 flex-col gap-4 overflow-auto pr-1">
                   {grouped.map((g) => (
                     <div key={g.companyKey} className="flex flex-col gap-2">
                       <CompanyHeader
@@ -349,7 +332,7 @@ export default function FareComparison() {
                                 className="inline-block h-2.5 w-2.5 rounded-full"
                                 style={{ backgroundColor: s.color }}
                               />
-                              <div className="truncate text-sm font-medium text-zinc-900">
+                              <div className="truncate text-sm font-medium text-zinc-900 wrap-break-word">
                                 {s.tableName}
                               </div>
                             </div>
@@ -362,6 +345,30 @@ export default function FareComparison() {
               </div>
             ) : null}
           </div>
+        </aside>
+
+        <div>
+          <SelectedNotesPanel blocks={selectedNotes} />
+        </div>
+
+        <div className="lg:col-start1 lg:row-start-4 rounded-2xl border border-zinc-200 bg-white p-4">
+          <div className="mb-2 text-sm font-semibold text-zinc-900">
+            注意事項
+          </div>
+          <ul className="mb-3 list-disc pl-5 text-sm leading-6 text-zinc-700 wrap-break-word">
+            <li>
+              運賃表データは各社の旅客営業規則、ICカード乗車券取扱規則等から手作業で収集しているため、情報が正確でない場合があります。
+            </li>
+            <li>
+              2026年3月現在の情報です。運賃改定などにより最新の情報でない場合があります。
+            </li>
+            <li>
+              営業キロに基づく大人片道普通旅客運賃を表示しています。加算運賃・特例・乗継割引などは別途考慮が必要です。
+            </li>
+            <li>
+              実際の運賃は各社の最新の運賃表や経路に従って確認してください。
+            </li>
+          </ul>
         </div>
       </div>
     </div>

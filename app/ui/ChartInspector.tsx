@@ -11,14 +11,14 @@ type Props = {
 
 export default function ChartInspector({ message, noValuesMessage, hoverValues }: Props) {
   return (
-      <div className="rounded-xl border border-zinc-200 bg-white p-3">
-      <div className="mb-2 flex items-center justify-between gap-3">
+    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="text-xs font-semibold text-zinc-900">インスペクタ</div>
-        <div className="text-[11px] text-zinc-600">
+        <div className="wrap-break-word text-[11px] text-zinc-600">
           {message}
         </div>
       </div>
-      <div className="flex max-h-55 flex-col gap-1 overflow-auto pr-1">
+      <div className="flex max-h-40 flex-col gap-1 overflow-auto pr-1">
         {hoverValues.map((v) => (
           <div
             key={v.id}
