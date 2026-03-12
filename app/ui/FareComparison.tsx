@@ -70,7 +70,10 @@ function normalizeFareData(raw: unknown): FareData {
 
 function defaultSelectedIds(series: Series[]) {
   // Show a few by default to avoid an empty chart.
-  return new Set(series.slice(0, Math.min(4, series.length)).map((s) => s.id));
+  return new Set(series
+    .filter(s => s.companyName === "JR東日本" && ["山手線内", "電車特定区間", "幹線"].some(v => s.tableName.includes(v)))
+    .map(s => s.id)
+  );
 }
 
 export default function FareComparison() {
@@ -280,18 +283,24 @@ export default function FareComparison() {
           <div className="mb-2 text-sm font-semibold text-zinc-900">
             注意事項
           </div>
-          <ul className="mb-3 list-disc pl-5 text-sm leading-6 text-zinc-700 wrap-break-word">
+          <ul className="list-disc pl-5 text-sm leading-6 text-zinc-700 wrap-break-word">
             <li>
-              運賃表データは各社の旅客営業規則、ICカード乗車券取扱規則等から手作業で収集しているため、情報が正確でない場合があります。
-            </li>
-            <li>
-              2026年3月現在の情報です。運賃改定などにより最新の情報でない場合があります。
+              運賃表データは各社の旅客営業規則、ICカード乗車券取扱規則等を基に作成したものです。手作業で収集しているため、情報が正確でない場合があります。
             </li>
             <li>
               営業キロに基づく大人片道普通旅客運賃を表示しています。加算運賃・特例・乗継割引などは別途考慮が必要です。
             </li>
             <li>
+              2026年3月時点の情報です。運賃改定などにより最新の情報でない場合があります。
+            </li>
+            <li>
               実際の運賃は各社の最新の運賃表や経路に従って確認してください。
+            </li>
+            <li>
+              本ツールの利用により生じたいかなる損害についても、開発者は一切の責任を負いません。
+            </li>
+            <li>
+              本ツールは個人による非公式のプロジェクトであり、記載されている鉄道各社とは一切関係ありません。
             </li>
           </ul>
         </div>

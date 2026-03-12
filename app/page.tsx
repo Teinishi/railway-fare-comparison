@@ -1,4 +1,5 @@
 import FareComparison from "./ui/FareComparison";
+import ProjectLinks from "./ui/ProjectLinks";
 
 export default function Home() {
   return (
@@ -21,6 +22,10 @@ export default function Home() {
            * Keeping it simple here: the component itself is marked "use client".
            */}
           <FareComparison />
+        </div>
+
+        <div className="mt-6">
+          <ProjectLinks />
         </div>
       </main>
     </div>
