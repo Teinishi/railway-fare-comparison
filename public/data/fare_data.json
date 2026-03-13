@@ -2,6 +2,7 @@
     "companies": [
         {
             "name": "JR東日本",
+            "tags": ["kanto", "heavyRail", "jr"],
             "fareTables": [
                 {
                     "name": "山手線内 (2026年改定前)",
@@ -231,96 +232,8 @@
             ]
         },
         {
-            "name": "東武鉄道",
-            "fareTables": [
-                {
-                    "name": "各線",
-                    "note": "鉄道駅バリアフリー料金(10円)を含む",
-                    "color": "#005bac",
-                    "fares": [
-                        { "km": 4, "ic": 157, "ticket": 160 },
-                        { "km": 7, "ic": 178, "ticket": 180 },
-                        { "km": 10, "ic": 209, "ticket": 210 },
-                        { "km": 15, "ic": 261, "ticket": 270 },
-                        { "km": 20, "ic": 324, "ticket": 330 },
-                        { "km": 25, "ic": 377, "ticket": 380 },
-                        { "km": 30, "ic": 429, "ticket": 430 },
-                        { "km": 35, "ic": 481, "ticket": 490 },
-                        { "km": 40, "ic": 534, "ticket": 540 },
-                        { "km": 45, "ic": 607, "ticket": 610 },
-                        { "km": 50, "ic": 670, "ticket": 670 },
-                        { "km": 60, "ic": 743, "ticket": 750 },
-                        { "km": 70, "ic": 827, "ticket": 830 },
-                        { "km": 80, "ic": 912, "ticket": 920 },
-                        { "km": 90, "ic": 995, "ticket": 1000 },
-                        { "km": 100, "ic": 1089, "ticket": 1090 },
-                        { "km": 120, "ic": 1225, "ticket": 1230 },
-                        { "km": 140, "ic": 1393, "ticket": 1400 },
-                        { "km": 178, "ic": 1581, "ticket": 1590 }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "西武鉄道",
-            "fareTables": [
-                {
-                    "name": "各線 (2026年改定前)",
-                    "note": "鉄道駅バリアフリー料金(10円)を含む",
-                    "color": "#3299fa",
-                    "fares": [
-                        { "km": 4, "ic": 157, "ticket": 160 },
-                        { "km": 8, "ic": 188, "ticket": 180 },
-                        { "km": 12, "ic": 220, "ticket": 220 },
-                        { "km": 16, "ic": 252, "ticket": 260 },
-                        { "km": 20, "ic": 282, "ticket": 290 },
-                        { "km": 24, "ic": 314, "ticket": 320 },
-                        { "km": 28, "ic": 356, "ticket": 360 },
-                        { "km": 32, "ic": 387, "ticket": 390 },
-                        { "km": 36, "ic": 419, "ticket": 420 },
-                        { "km": 40, "ic": 450, "ticket": 450 },
-                        { "km": 44, "ic": 481, "ticket": 490 },
-                        { "km": 48, "ic": 513, "ticket": 520 },
-                        { "km": 52, "ic": 544, "ticket": 550 },
-                        { "km": 56, "ic": 576, "ticket": 580 },
-                        { "km": 60, "ic": 618, "ticket": 620 },
-                        { "km": 64, "ic": 649, "ticket": 650 },
-                        { "km": 68, "ic": 692, "ticket": 700 },
-                        { "km": 72, "ic": 722, "ticket": 730 },
-                        { "km": 76, "ic": 764, "ticket": 770 },
-                        { "km": 81, "ic": 796, "ticket": 800 }
-                    ]
-                },
-                {
-                    "name": "各線 (2026年改定後)",
-                    "color": "#2779c7",
-                    "fares": [
-                        { "km": 4, "ic": 169, "ticket": 170 },
-                        { "km": 8, "ic": 207, "ticket": 210 },
-                        { "km": 12, "ic": 245, "ticket": 250 },
-                        { "km": 16, "ic": 284, "ticket": 290 },
-                        { "km": 20, "ic": 323, "ticket": 330 },
-                        { "km": 24, "ic": 362, "ticket": 370 },
-                        { "km": 28, "ic": 402, "ticket": 410 },
-                        { "km": 32, "ic": 442, "ticket": 450 },
-                        { "km": 36, "ic": 483, "ticket": 490 },
-                        { "km": 40, "ic": 521, "ticket": 530 },
-                        { "km": 44, "ic": 557, "ticket": 560 },
-                        { "km": 48, "ic": 592, "ticket": 600 },
-                        { "km": 52, "ic": 627, "ticket": 630 },
-                        { "km": 56, "ic": 657, "ticket": 660 },
-                        { "km": 60, "ic": 683, "ticket": 690 },
-                        { "km": 64, "ic": 709, "ticket": 710 },
-                        { "km": 68, "ic": 735, "ticket": 740 },
-                        { "km": 72, "ic": 758, "ticket": 760 },
-                        { "km": 76, "ic": 781, "ticket": 790 },
-                        { "km": 81, "ic": 800, "ticket": 800 }
-                    ]
-                }
-            ]
-        },
-        {
             "name": "京成電鉄",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
             "note": "成田空港周辺に加算運賃の設定あり\n千原線周辺に乗継運賃の設定あり\n特定区間運賃の設定あり\n京成高砂～印旛日本医大間は北総鉄道の運賃",
             "fareTables": [
                 {
@@ -373,7 +286,7 @@
                     ]
                 },
                 {
-                    "name": "成田空港線 (成田スカイアクセス線)",
+                    "name": "成田空港線",
                     "color": "#ff8020",
                     "fares": [
                         { "km": 3, "ic": 210, "ticket": 210 },
@@ -398,84 +311,100 @@
             ]
         },
         {
-            "name": "北総鉄道",
+            "name": "東武鉄道",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
             "fareTables": [
                 {
-                    "name": "北総線",
-                    "color": "#38c0f0",
+                    "note": "鉄道駅バリアフリー料金(10円)を含む",
+                    "color": "#005bac",
                     "fares": [
-                        { "km": 3, "ic": 188, "ticket": 190 },
-                        { "km": 5, "ic": 279, "ticket": 280 },
-                        { "km": 7, "ic": 330, "ticket": 330 },
-                        { "km": 9, "ic": 379, "ticket": 380 },
-                        { "km": 11, "ic": 427, "ticket": 430 },
-                        { "km": 14, "ic": 475, "ticket": 480 },
-                        { "km": 17, "ic": 546, "ticket": 550 },
-                        { "km": 20, "ic": 617, "ticket": 620 },
-                        { "km": 23, "ic": 669, "ticket": 670 },
-                        { "km": 26, "ic": 720, "ticket": 720 },
-                        { "km": 29, "ic": 768, "ticket": 770 },
-                        { "km": 33, "ic": 811, "ticket": 820 }
+                        { "km": 4, "ic": 157, "ticket": 160 },
+                        { "km": 7, "ic": 178, "ticket": 180 },
+                        { "km": 10, "ic": 209, "ticket": 210 },
+                        { "km": 15, "ic": 261, "ticket": 270 },
+                        { "km": 20, "ic": 324, "ticket": 330 },
+                        { "km": 25, "ic": 377, "ticket": 380 },
+                        { "km": 30, "ic": 429, "ticket": 430 },
+                        { "km": 35, "ic": 481, "ticket": 490 },
+                        { "km": 40, "ic": 534, "ticket": 540 },
+                        { "km": 45, "ic": 607, "ticket": 610 },
+                        { "km": 50, "ic": 670, "ticket": 670 },
+                        { "km": 60, "ic": 743, "ticket": 750 },
+                        { "km": 70, "ic": 827, "ticket": 830 },
+                        { "km": 80, "ic": 912, "ticket": 920 },
+                        { "km": 90, "ic": 995, "ticket": 1000 },
+                        { "km": 100, "ic": 1089, "ticket": 1090 },
+                        { "km": 120, "ic": 1225, "ticket": 1230 },
+                        { "km": 140, "ic": 1393, "ticket": 1400 },
+                        { "km": 178, "ic": 1581, "ticket": 1590 }
                     ]
                 }
             ]
         },
         {
-            "name": "京急電鉄",
-            "note": "天空橋～羽田空港第1・第2ターミナル間に加算運賃の設定あり\n特定区間運賃の設定あり",
+            "name": "西武鉄道",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
             "fareTables": [
                 {
-                    "name": "各線",
-                    "color": "#33c2e4",
+                    "name": "(2026年改定前)",
+                    "note": "鉄道駅バリアフリー料金(10円)を含む",
+                    "color": "#3299fa",
                     "fares": [
-                        { "km": 3, "ic": 150, "ticket": 150 },
-                        { "km": 6, "ic": 180, "ticket": 180 },
-                        { "km": 10, "ic": 228, "ticket": 230 },
-                        { "km": 15, "ic": 277, "ticket": 280 },
-                        { "km": 20, "ic": 313, "ticket": 320 },
-                        { "km": 25, "ic": 347, "ticket": 350 },
-                        { "km": 30, "ic": 403, "ticket": 410 },
-                        { "km": 35, "ic": 455, "ticket": 460 },
-                        { "km": 40, "ic": 510, "ticket": 510 },
-                        { "km": 45, "ic": 566, "ticket": 570 },
-                        { "km": 50, "ic": 620, "ticket": 620 },
-                        { "km": 55, "ic": 667, "ticket": 670 },
-                        { "km": 60, "ic": 710, "ticket": 710 },
-                        { "km": 65, "ic": 740, "ticket": 740 },
-                        { "km": 67, "ic": 740, "ticket": 740 }
+                        { "km": 4, "ic": 157, "ticket": 160 },
+                        { "km": 8, "ic": 188, "ticket": 180 },
+                        { "km": 12, "ic": 220, "ticket": 220 },
+                        { "km": 16, "ic": 252, "ticket": 260 },
+                        { "km": 20, "ic": 282, "ticket": 290 },
+                        { "km": 24, "ic": 314, "ticket": 320 },
+                        { "km": 28, "ic": 356, "ticket": 360 },
+                        { "km": 32, "ic": 387, "ticket": 390 },
+                        { "km": 36, "ic": 419, "ticket": 420 },
+                        { "km": 40, "ic": 450, "ticket": 450 },
+                        { "km": 44, "ic": 481, "ticket": 490 },
+                        { "km": 48, "ic": 513, "ticket": 520 },
+                        { "km": 52, "ic": 544, "ticket": 550 },
+                        { "km": 56, "ic": 576, "ticket": 580 },
+                        { "km": 60, "ic": 618, "ticket": 620 },
+                        { "km": 64, "ic": 649, "ticket": 650 },
+                        { "km": 68, "ic": 692, "ticket": 700 },
+                        { "km": 72, "ic": 722, "ticket": 730 },
+                        { "km": 76, "ic": 764, "ticket": 770 },
+                        { "km": 81, "ic": 796, "ticket": 800 }
                     ]
-                }
-            ]
-        },
-        {
-            "name": "東急電鉄",
-            "note": "世田谷線、こどもの国線は均一運賃\n新綱島～新横浜間に加算運賃の設定あり\n田園都市線とこどもの国線に乗り継ぎ運賃の設定あり",
-            "fareTables": [
+                },
                 {
-                    "name": "各線 (世田谷線、こどもの国線は除く)",
-                    "color": "#e83610",
+                    "name": "(2026年改定後)",
+                    "color": "#2779c7",
                     "fares": [
-                        { "km": 3, "ic": 140, "ticket": 140 },
-                        { "km": 7, "ic": 180, "ticket": 180 },
-                        { "km": 11, "ic": 227, "ticket": 230 },
-                        { "km": 15, "ic": 250, "ticket": 250 },
-                        { "km": 20, "ic": 288, "ticket": 290 },
-                        { "km": 25, "ic": 309, "ticket": 310 },
-                        { "km": 30, "ic": 347, "ticket": 350 },
-                        { "km": 35, "ic": 381, "ticket": 390 },
-                        { "km": 40, "ic": 430, "ticket": 430 },
-                        { "km": 45, "ic": 469, "ticket": 470 },
-                        { "km": 50, "ic": 500, "ticket": 500 },
-                        { "km": 56, "ic": 531, "ticket": 540 }
+                        { "km": 4, "ic": 169, "ticket": 170 },
+                        { "km": 8, "ic": 207, "ticket": 210 },
+                        { "km": 12, "ic": 245, "ticket": 250 },
+                        { "km": 16, "ic": 284, "ticket": 290 },
+                        { "km": 20, "ic": 323, "ticket": 330 },
+                        { "km": 24, "ic": 362, "ticket": 370 },
+                        { "km": 28, "ic": 402, "ticket": 410 },
+                        { "km": 32, "ic": 442, "ticket": 450 },
+                        { "km": 36, "ic": 483, "ticket": 490 },
+                        { "km": 40, "ic": 521, "ticket": 530 },
+                        { "km": 44, "ic": 557, "ticket": 560 },
+                        { "km": 48, "ic": 592, "ticket": 600 },
+                        { "km": 52, "ic": 627, "ticket": 630 },
+                        { "km": 56, "ic": 657, "ticket": 660 },
+                        { "km": 60, "ic": 683, "ticket": 690 },
+                        { "km": 64, "ic": 709, "ticket": 710 },
+                        { "km": 68, "ic": 735, "ticket": 740 },
+                        { "km": 72, "ic": 758, "ticket": 760 },
+                        { "km": 76, "ic": 781, "ticket": 790 },
+                        { "km": 81, "ic": 800, "ticket": 800 }
                     ]
                 }
             ]
         },
         {
             "name": "京王電鉄",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
             "fareTables": [
                 {
-                    "name": "各線",
                     "color": "#dd0077",
                     "fares": [
                         { "km": 4, "ic": 140, "ticket": 140 },
@@ -495,9 +424,9 @@
         },
         {
             "name": "小田急電鉄",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
             "fareTables": [
                 {
-                    "name": "各線",
                     "note": "鉄道駅バリアフリー料金(10円)を含む",
                     "color": "#2288cc",
                     "fares": [
@@ -526,12 +455,63 @@
             ]
         },
         {
-            "name": "相模鉄道",
-            "note": "いずみ野線、新横浜線には加算運賃の設定あり",
+            "name": "東急電鉄",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
+            "note": "世田谷線、こどもの国線は均一運賃\n新綱島～新横浜間に加算運賃の設定あり\n田園都市線とこどもの国線に乗り継ぎ運賃の設定あり",
             "fareTables": [
                 {
-                    "name": "各線",
-                    "note": "鉄道駅バリアフリー料金(10円)を含む",
+                    "name": "(世田谷線、こどもの国線は除く)",
+                    "color": "#e83610",
+                    "fares": [
+                        { "km": 3, "ic": 140, "ticket": 140 },
+                        { "km": 7, "ic": 180, "ticket": 180 },
+                        { "km": 11, "ic": 227, "ticket": 230 },
+                        { "km": 15, "ic": 250, "ticket": 250 },
+                        { "km": 20, "ic": 288, "ticket": 290 },
+                        { "km": 25, "ic": 309, "ticket": 310 },
+                        { "km": 30, "ic": 347, "ticket": 350 },
+                        { "km": 35, "ic": 381, "ticket": 390 },
+                        { "km": 40, "ic": 430, "ticket": 430 },
+                        { "km": 45, "ic": 469, "ticket": 470 },
+                        { "km": 50, "ic": 500, "ticket": 500 },
+                        { "km": 56, "ic": 531, "ticket": 540 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "京急電鉄",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
+            "note": "天空橋～羽田空港第1・第2ターミナル間に加算運賃の設定あり\n特定区間運賃の設定あり",
+            "fareTables": [
+                {
+                    "color": "#33c2e4",
+                    "fares": [
+                        { "km": 3, "ic": 150, "ticket": 150 },
+                        { "km": 6, "ic": 180, "ticket": 180 },
+                        { "km": 10, "ic": 228, "ticket": 230 },
+                        { "km": 15, "ic": 277, "ticket": 280 },
+                        { "km": 20, "ic": 313, "ticket": 320 },
+                        { "km": 25, "ic": 347, "ticket": 350 },
+                        { "km": 30, "ic": 403, "ticket": 410 },
+                        { "km": 35, "ic": 455, "ticket": 460 },
+                        { "km": 40, "ic": 510, "ticket": 510 },
+                        { "km": 45, "ic": 566, "ticket": 570 },
+                        { "km": 50, "ic": 620, "ticket": 620 },
+                        { "km": 55, "ic": 667, "ticket": 670 },
+                        { "km": 60, "ic": 710, "ticket": 710 },
+                        { "km": 65, "ic": 740, "ticket": 740 },
+                        { "km": 67, "ic": 740, "ticket": 740 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "相模鉄道",
+            "tags": ["kanto", "heavyRail", "majorPrivate"],
+            "fareTables": [
+                {
+                    "note": "いずみ野線、新横浜線には加算運賃の設定あり\n鉄道駅バリアフリー料金(10円)を含む",
                     "color": "#002971",
                     "fares": [
                         { "km": 3, "ic": 157, "ticket": 160 },
@@ -547,11 +527,10 @@
         },
         {
             "name": "東京メトロ",
-            "note": "北千住～綾瀬間、目黒～白金高輪間に特例あり\n都営地下鉄との乗継割引あり",
+            "tags": ["kanto", "heavyRail", "subway", "majorPrivate"],
             "fareTables": [
                 {
-                    "name": "各線",
-                    "note": "鉄道駅バリアフリー料金(10円)を含む",
+                    "note": "北千住～綾瀬間、目黒～白金高輪間に特例あり\n都営地下鉄との乗継割引あり\n鉄道駅バリアフリー料金(10円)を含む",
                     "color": "#0c9ed4",
                     "fares": [
                         { "km": 6, "ic": 178, "ticket": 180 },
@@ -565,10 +544,10 @@
         },
         {
             "name": "都営地下鉄",
+            "tags": ["kanto", "heavyRail", "subway", "municipal"],
             "note": "目黒～白金高輪間に特例あり\n東京メトロとの乗継割引あり",
             "fareTables": [
                 {
-                    "name": "各線",
                     "color": "#199332",
                     "fares": [
                         { "km": 4, "ic": 178, "ticket": 180 },
@@ -577,6 +556,333 @@
                         { "km": 21, "ic": 325, "ticket": 330 },
                         { "km": 27, "ic": 377, "ticket": 380 },
                         { "km": 46, "ic": 430, "ticket": 430 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "つくばエクスプレス",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "name": "(2026年改定前)",
+                    "color": "#0051b5",
+                    "fares": [
+                        { "km": 3, "ic": 168, "ticket": 170 },
+                        { "km": 5, "ic": 210, "ticket": 210 },
+                        { "km": 7, "ic": 251, "ticket": 260 },
+                        { "km": 9, "ic": 293, "ticket": 300 },
+                        { "km": 11, "ic": 335, "ticket": 340 },
+                        { "km": 13, "ic": 377, "ticket": 380 },
+                        { "km": 15, "ic": 419, "ticket": 420 },
+                        { "km": 18, "ic": 471, "ticket": 480 },
+                        { "km": 21, "ic": 524, "ticket": 530 },
+                        { "km": 24, "ic": 576, "ticket": 580 },
+                        { "km": 27, "ic": 629, "ticket": 630 },
+                        { "km": 30, "ic": 682, "ticket": 690 },
+                        { "km": 33, "ic": 733, "ticket": 740 },
+                        { "km": 36, "ic": 786, "ticket": 790 },
+                        { "km": 39, "ic": 838, "ticket": 840 },
+                        { "km": 42, "ic": 891, "ticket": 900 },
+                        { "km": 45, "ic": 943, "ticket": 950 },
+                        { "km": 48, "ic": 995, "ticket": 1000 },
+                        { "km": 51, "ic": 1048, "ticket": 1050 },
+                        { "km": 54, "ic": 1100, "ticket": 1100 },
+                        { "km": 57, "ic": 1152, "ticket": 1160 },
+                        { "km": 59, "ic": 1205, "ticket": 1210 }
+                    ]
+                },
+                {
+                    "name": "(2026年改定後)",
+                    "color": "#003b83",
+                    "fares": [
+                        { "km": 3, "ic": 180, "ticket": 180 },
+                        { "km": 5, "ic": 230, "ticket": 230 },
+                        { "km": 7, "ic": 271, "ticket": 280 },
+                        { "km": 9, "ic": 320, "ticket": 320 },
+                        { "km": 11, "ic": 362, "ticket": 370 },
+                        { "km": 13, "ic": 412, "ticket": 420 },
+                        { "km": 15, "ic": 454, "ticket": 460 },
+                        { "km": 18, "ic": 513, "ticket": 520 },
+                        { "km": 21, "ic": 574, "ticket": 580 },
+                        { "km": 24, "ic": 626, "ticket": 630 },
+                        { "km": 27, "ic": 688, "ticket": 690 },
+                        { "km": 30, "ic": 741, "ticket": 750 },
+                        { "km": 33, "ic": 800, "ticket": 800 },
+                        { "km": 36, "ic": 853, "ticket": 860 },
+                        { "km": 39, "ic": 913, "ticket": 920 },
+                        { "km": 42, "ic": 966, "ticket": 970 },
+                        { "km": 45, "ic": 1018, "ticket": 1020 },
+                        { "km": 48, "ic": 1070, "ticket": 1070 },
+                        { "km": 51, "ic": 1123, "ticket": 1130 },
+                        { "km": 54, "ic": 1175, "ticket": 1180 },
+                        { "km": 57, "ic": 1227, "ticket": 1230 },
+                        { "km": 59, "ic": 1280, "ticket": 1280 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "りんかい線",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#00418e",
+                    "note": "旅客営業規則、ICカード乗車券取扱規則等を確認できなかったため、各駅間の営業キロおよび運賃から推定",
+                    "fares": [
+                        { "km": 3, "ic": 210, "ticket": 210 },
+                        { "km": 6, "ic": 272, "ticket": 280 },
+                        { "km": 9, "ic": 335, "ticket": 340 },
+                        { "km": 13, "ic": 398, "ticket": 400 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ゆりかもめ",
+            "tags": ["kanto", "agt", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#0099d6",
+                    "fares": [
+                        { "km": 2, "ic": 189, "ticket": 190 },
+                        { "km": 5, "ic": 251, "ticket": 260 },
+                        { "km": 8, "ic": 325, "ticket": 330 },
+                        { "km": 15, "ic": 388, "ticket": 390 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "東京モノレール",
+            "tags": ["kanto", "monorail", "private"],
+            "fareTables": [
+                {
+                    "color": "#14a096",
+                    "fares": [
+                        { "km": 1.5, "ic": 177, "ticket": 180 },
+                        { "km": 4.5, "ic": 229, "ticket": 230 },
+                        { "km": 7.5, "ic": 317, "ticket": 320 },
+                        { "km": 10.5, "ic": 388, "ticket": 390 },
+                        { "km": 13.5, "ic": 458, "ticket": 460 },
+                        { "km": 17.8, "ic": 519, "ticket": 520 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "多摩都市モノレール",
+            "tags": ["kanto", "monorail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#ed6d00",
+                    "note": "1駅区間割引運賃あり\n特定区間運賃の設定あり",
+                    "fares": [
+                        { "km": 3, "ic": 214, "ticket": 220 },
+                        { "km": 5, "ic": 265, "ticket": 270 },
+                        { "km": 7, "ic": 316, "ticket": 320 },
+                        { "km": 10, "ic": 367, "ticket": 370 },
+                        { "km": 16, "ic": 408, "ticket": 410 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "北総鉄道",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#38c0f0",
+                    "fares": [
+                        { "km": 3, "ic": 188, "ticket": 190 },
+                        { "km": 5, "ic": 279, "ticket": 280 },
+                        { "km": 7, "ic": 330, "ticket": 330 },
+                        { "km": 9, "ic": 379, "ticket": 380 },
+                        { "km": 11, "ic": 427, "ticket": 430 },
+                        { "km": 14, "ic": 475, "ticket": 480 },
+                        { "km": 17, "ic": 546, "ticket": 550 },
+                        { "km": 20, "ic": 617, "ticket": 620 },
+                        { "km": 23, "ic": 669, "ticket": 670 },
+                        { "km": 26, "ic": 720, "ticket": 720 },
+                        { "km": 29, "ic": 768, "ticket": 770 },
+                        { "km": 33, "ic": 811, "ticket": 820 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "千葉都市モノレール",
+            "tags": ["kanto", "monorail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#396be3",
+                    "fares": [
+                        { "km": 2, "ic": 199, "ticket": 200 },
+                        { "km": 3, "ic": 220, "ticket": 220 },
+                        { "km": 5, "ic": 283, "ticket": 290 },
+                        { "km": 7, "ic": 335, "ticket": 340 },
+                        { "km": 9, "ic": 388, "ticket": 390 },
+                        { "km": 11, "ic": 430, "ticket": 430 },
+                        { "km": 13, "ic": 471, "ticket": 480 },
+                        { "km": 14, "ic": 513, "ticket": 520 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "東葉高速鉄道",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#3fb036",
+                    "fares": [
+                        { "km": 3, "ic": 210, "ticket": 210 },
+                        { "km": 5, "ic": 293, "ticket": 300 },
+                        { "km": 7, "ic": 367, "ticket": 370 },
+                        { "km": 9, "ic": 440, "ticket": 440 },
+                        { "km": 11, "ic": 513, "ticket": 520 },
+                        { "km": 14, "ic": 576, "ticket": 580 },
+                        { "km": 17, "ic": 639, "ticket": 640 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "流鉄",
+            "tags": ["kanto", "heavyRail", "private"],
+            "fareTables": [
+                {
+                    "color": "#d34106",
+                    "note": "ICカードは利用不可",
+                    "fares": [
+                        { "km": 2, "ticket": 140 },
+                        { "km": 3, "ticket": 150 },
+                        { "km": 4, "ticket": 190 },
+                        { "km": 5, "ticket": 200 },
+                        { "km": 6, "ticket": 220 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "埼玉高速鉄道",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#395ea3",
+                    "note": "ICカード、きっぷともに同額",
+                    "fares": [
+                        { "km": 3, "ic": 210, "ticket": 210 },
+                        { "km": 5, "ic": 270, "ticket": 270 },
+                        { "km": 7, "ic": 310, "ticket": 310 },
+                        { "km": 9, "ic": 350, "ticket": 350 },
+                        { "km": 11, "ic": 400, "ticket": 400 },
+                        { "km": 13, "ic": 440, "ticket": 440 },
+                        { "km": 15, "ic": 480, "ticket": 480 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ニューシャトル",
+            "tags": ["kanto", "agt", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#0aa098",
+                    "note": "旅客営業規則、ICカード乗車券取扱規則等を確認できなかったため、Wikipedia より",
+                    "fares": [
+                        { "km": 2, "ic": 189, "ticket": 190 },
+                        { "km": 4, "ic": 220, "ticket": 220 },
+                        { "km": 6, "ic": 251, "ticket": 260 },
+                        { "km": 8, "ic": 283, "ticket": 290 },
+                        { "km": 10, "ic": 325, "ticket": 330 },
+                        { "km": 13, "ic": 356, "ticket": 360 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "横浜市営地下鉄",
+            "tags": ["kanto", "heavyRail", "subway", "municipal"],
+            "fareTables": [
+                {
+                    "color": "#056baf",
+                    "fares": [
+                        { "km": 3, "ic": 210, "ticket": 210 },
+                        { "km": 7, "ic": 242, "ticket": 250 },
+                        { "km": 11, "ic": 272, "ticket": 280 },
+                        { "km": 15, "ic": 304, "ticket": 310 },
+                        { "km": 19, "ic": 335, "ticket": 340 },
+                        { "km": 23, "ic": 367, "ticket": 370 },
+                        { "km": 27, "ic": 398, "ticket": 400 },
+                        { "km": 31, "ic": 430, "ticket": 430 },
+                        { "km": 35, "ic": 462, "ticket": 470 },
+                        { "km": 39, "ic": 492, "ticket": 500 },
+                        { "km": 43, "ic": 524, "ticket": 530 },
+                        { "km": 47, "ic": 555, "ticket": 560 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "みなとみらい線",
+            "tags": ["kanto", "heavyRail", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#00489a",
+                    "note": "鉄道駅バリアフリー料金(10円)を含む",
+                    "fares": [
+                        { "km": 3, "ic": 193, "ticket": 200 },
+                        { "km": 5, "ic": 224, "ticket": 230 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "横浜シーサイドライン",
+            "tags": ["kanto", "agt", "thirdSector"],
+            "fareTables": [
+                {
+                    "color": "#f68b1e",
+                    "fares": [
+                        { "km": 2, "ic": 234, "ticket": 240 },
+                        { "km": 4, "ic": 265, "ticket": 270 },
+                        { "km": 7, "ic": 295, "ticket": 300 },
+                        { "km": 11, "ic": 316, "ticket": 320 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "江ノ島電鉄",
+            "tags": ["kanto", "heavyRail"],
+            "fareTables": [
+                {
+                    "color": "#14a94b",
+                    "note": "ICカード、きっぷともに同額",
+                    "fares": [
+                        { "km": 2, "ic": 200, "ticket": 200 },
+                        { "km": 4, "ic": 220, "ticket": 220 },
+                        { "km": 7, "ic": 260, "ticket": 260 },
+                        { "km": 10, "ic": 310, "ticket": 310 }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "湘南モノレール",
+            "tags": ["kanto", "monorail", "private"],
+            "fareTables": [
+                {
+                    "color": "#ff0000",
+                    "note": "ICカード、きっぷともに同額",
+                    "fares": [
+                        { "km": 2, "ic": 180, "ticket": 180 },
+                        { "km": 3, "ic": 220, "ticket": 220 },
+                        { "km": 4, "ic": 250, "ticket": 250 },
+                        { "km": 5, "ic": 270, "ticket": 270 },
+                        { "km": 6, "ic": 290, "ticket": 290 },
+                        { "km": 7, "ic": 320, "ticket": 320 }
                     ]
                 }
             ]
