@@ -15,10 +15,10 @@ export default function RouteListItem({ checked, onChange, color, name }: Props)
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
-          className="mt-0.5 h-4 w-4 accent-zinc-900"
+          className="h-4 w-4 accent-zinc-900"
         />
         <span
-          className="mt-1 inline-block h-2.5 w-2.5 rounded-full"
+          className="inline-block h-2.5 w-2.5 rounded-full"
           style={{ backgroundColor: color }}
         />
         <div className="whitespace-normal wrap-break-word text-sm font-medium leading-snug text-zinc-900">
