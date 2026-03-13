@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 
-export type NoteBlock = { id: string; title: string; note: string };
+export type NoteBlock = { id: string; color?: string; title: string; note: string };
 
 export default function SelectedNotesPanel({
   blocks,
@@ -57,8 +57,14 @@ export default function SelectedNotesPanel({
               key={n.id}
               className="min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 p-3"
             >
-              <div className="text-sm font-medium text-zinc-900 wrap-break-word">
-                {n.title}
+              <div className="flex items-center gap-2">
+                {n.color && <span
+                  className="inline-block h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: n.color }}
+                />}
+                <span className="text-sm font-medium text-zinc-900 wrap-break-word">
+                  {n.title}
+                </span>
               </div>
               <div className="mt-2 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-zinc-700">
                 {n.note}

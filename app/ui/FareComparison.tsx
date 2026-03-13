@@ -180,6 +180,7 @@ export default function FareComparison() {
         if (note) {
           blocks.push({
             id: `company:${companyIndex}`,
+            color: company.fareTables.length === 1 ? s.color : undefined,
             title: company.name,
             note,
           });
@@ -191,7 +192,8 @@ export default function FareComparison() {
       if (note) {
         blocks.push({
           id: `table:${s.id}`,
-          title: `${company.name} ${s.tableName}`,
+          color: s.color,
+          title: s.tableName !== undefined ? `${company.name} ${s.tableName}` : company.name,
           note,
         });
       }
