@@ -15,7 +15,7 @@ type FarePoint = {
 };
 
 type FareTable = {
-  name: string;
+  name?: string;
   note?: string;
   color: string;
   fares: FarePoint[];
@@ -37,7 +37,7 @@ type Series = {
   companyIndex: number;
   companyName: string;
   tableIndex: number;
-  tableName: string;
+  tableName?: string;
   note?: string;
   fares: FarePoint[];
   color: string;
@@ -72,7 +72,7 @@ function normalizeFareData(raw: unknown): FareData {
 function defaultSelectedIds(series: Series[]) {
   // Show a few by default to avoid an empty chart.
   return new Set(series
-    .filter(s => s.companyName === "JR東日本" && ["山手線内", "電車特定区間", "幹線"].some(v => s.tableName.includes(v)))
+    .filter(s => s.companyName === "JR東日本" && ["山手線内", "電車特定区間", "幹線"].some(v => s.tableName?.includes(v)))
     .map(s => s.id)
   );
 }
@@ -124,9 +124,9 @@ export default function FareComparison() {
           id: `${companyIndex}:${tableIndex}`,
           companyKey,
           companyIndex,
-          companyName: company.name ?? companyKey,
+          companyName: company.name,
           tableIndex,
-          tableName: table.name ?? `table${tableIndex}`,
+          tableName: table.name,
           note: table.note,
           fares: table.fares,
           color: table.color,

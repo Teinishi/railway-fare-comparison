@@ -6,7 +6,7 @@ type Item = {
   id: string;
   companyKey: string;
   companyName: string;
-  tableName: string;
+  tableName?: string;
   color: string;
 };
 

@@ -10,7 +10,7 @@ type Props = {
     id: string;
     companyKey: string;
     companyName: string;
-    tableName: string;
+    tableName?: string;
     color: string;
   }[],
   selectedIds: Set<string>;
@@ -31,7 +31,7 @@ export default function CompanyListItem({ companyKey, companyName, items, select
         checked={selectedIds.has(theTable.id)}
         onChange={(checked) => onChangeRoute(checked, theTable.id)}
         color={theTable.color}
-        name={`${companyName} ${theTable.tableName}`}
+        name={theTable.tableName !== undefined ? `${companyName} ${theTable.tableName}` : companyName}
       />
     );
   } else {
@@ -69,7 +69,7 @@ export default function CompanyListItem({ companyKey, companyName, items, select
                   checked={selectedIds.has(s.id)}
                   onChange={(checked) => onChangeRoute(checked, s.id)}
                   color={s.color}
-                  name={s.tableName}
+                  name={s.tableName!}
                 />
               </div>
             );

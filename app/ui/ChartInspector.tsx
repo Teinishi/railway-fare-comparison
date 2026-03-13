@@ -83,7 +83,7 @@ export default function ChartInspector({
             onBlur={() => onHoverId?.(null)}
             onClick={() => onTogglePin?.(v.id)}
             className={
-              "w-full grid grid-cols-[10px_1fr_max-content] items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs " +
+              "w-full grid grid-cols-[10px_1fr_max-content_max-content] items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs " +
               (v.id === activeId
                 ? "bg-blue-100 text-zinc-950"
                 : "bg-zinc-50 text-zinc-700")
@@ -101,7 +101,7 @@ export default function ChartInspector({
                 <LuPin />
               </div>
             ) : null}
-            <div className="tabular-nums text-zinc-950 text-right">
+            <div className="col-start-4 tabular-nums text-zinc-950 text-right">
               {v.value === null ? "—" : `${v.value}${v.unit ?? ""}`}
             </div>
           </button>

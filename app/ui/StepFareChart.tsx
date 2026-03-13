@@ -21,7 +21,7 @@ const HOVER_PICK_MAX_DY_PX = 20;
 type Series = {
   id: string;
   companyName: string;
-  tableName: string;
+  tableName?: string;
   fares: FarePoint[];
   color: string;
 };
@@ -201,7 +201,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
       const yen = km === null ? null : fareAtDistance(s.fares, km, fareKind);
       return {
         id: s.id,
-        label: `${s.companyName} / ${s.tableName}`,
+        label: s.tableName ? `${s.companyName} ${s.tableName}` : s.companyName,
         color: s.color,
         value: yen,
         unit: "円",
@@ -716,7 +716,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
                   strokeWidth={isActive ? 4 : isDim ? 2 : 3}
                   strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={isActive ? 0.95 : isDim ? 0.15 : 0.7}
+                  opacity={isActive ? 0.95 : isDim ? 0.2 : 0.7}
                 />
               );
             })}
