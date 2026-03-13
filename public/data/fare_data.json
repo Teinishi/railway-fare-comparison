@@ -856,7 +856,7 @@
         },
         {
             "name": "江ノ島電鉄",
-            "tags": ["kanto", "heavyRail"],
+            "tags": ["kanto", "heavyRail", "private"],
             "fareTables": [
                 {
                     "color": "#14a94b",
