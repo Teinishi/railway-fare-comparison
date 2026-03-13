@@ -569,7 +569,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
   }, [baseExtent.maxKm, baseExtent.minKm, clientToSvg, dims.m.l, dims.m.r, dims.w, domain.maxKm, domain.minKm, fromX, plotRect.bottom, plotRect.right, plotRect.x, series.length]);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="h-full flex flex-col gap-3">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="text-sm font-semibold text-zinc-900">運賃グラフ</div>
         <div className="text-xs text-zinc-600">
@@ -579,7 +579,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
       <div
         ref={containerRef}
-        className="relative flex flex-col min-h-105 sm:h-105 sm:min-h-0 rounded-xl bg-white"
+        className="h-105 shrink-0 relative flex flex-col sm:min-h-0 rounded-md bg-white"
       >
         <div className="m-3 pointer-events-auto flex items-center gap-2">
           <div className="rounded-full border border-zinc-200 bg-white/95 px-3 py-1.5 text-xs text-zinc-700 shadow-sm backdrop-blur">
@@ -771,6 +771,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
       </div>
 
       <ChartInspector
+        className="grow min-h-0 max-h-57.5 lg:max-h-none"
         message={hoverKm === null ? "グラフにホバーで金額表示" : `${hoverKm.toFixed(2)} km`}
         hoverValues={hoverValues}
         noValuesMessage="表示する路線を選択してください"

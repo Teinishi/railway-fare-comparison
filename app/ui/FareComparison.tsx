@@ -23,6 +23,7 @@ type FareTable = {
 
 type Company = {
   name: string;
+  tags?: string[];
   note?: string;
   fareTables: FareTable[];
 };
@@ -36,6 +37,7 @@ type Series = {
   companyKey: string;
   companyIndex: number;
   companyName: string;
+  tags?: string[];
   tableIndex: number;
   tableName?: string;
   note?: string;
@@ -82,6 +84,7 @@ export default function FareComparison() {
   const [data, setData] = useState<FareData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filterText, setFilterText] = useState("");
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +128,7 @@ export default function FareComparison() {
           companyKey,
           companyIndex,
           companyName: company.name,
+          tags: company.tags,
           tableIndex,
           tableName: table.name,
           note: table.note,
@@ -135,6 +139,21 @@ export default function FareComparison() {
     }
 
     return series;
+  }, [data]);
+
+  const availableTags = useMemo(() => {
+    if (!data) return new Set<string>();
+    const tags = new Set<string>();
+    const seen = new Set<string>();
+    for (const c of data.companies) {
+      const ts = c.tags ?? [];
+      for (const t of ts) {
+        if (seen.has(t)) continue;
+        seen.add(t);
+        tags.add(t);
+      }
+    }
+    return tags;
   }, [data]);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() =>
@@ -152,12 +171,18 @@ export default function FareComparison() {
 
   const filteredSeries = useMemo(() => {
     const q = filterText.trim().toLowerCase();
-    if (!q) return allSeries;
-    return allSeries.filter((s) => {
-      const hay = `${s.companyName} ${s.tableName}`.toLowerCase();
-      return hay.includes(q);
-    });
-  }, [allSeries, filterText]);
+    let out = allSeries;
+    if (q) {
+      out = out.filter((s) => {
+        const hay = `${s.companyName} ${s.tableName ?? ""}`.toLowerCase();
+        return hay.includes(q);
+      });
+    }
+    if (selectedTags.size > 0) {
+      out = out.filter((s) => (s.tags ?? []).some((t) => selectedTags.has(t)));
+    }
+    return out;
+  }, [allSeries, filterText, selectedTags]);
 
   const selectedSeries = useMemo(() => {
     const selected = allSeries.filter((s) => selectedIds.has(s.id));
@@ -240,19 +265,30 @@ export default function FareComparison() {
   }
 
   function setAllVisible(checked: boolean) {
-    setSelectedIds((prev) => {
+    // UX: when filtered, "All ON" should turn on only visible items and turn off hidden ones.
+    // "All OFF" should turn off everything (including hidden items).
+    setSelectedIds(() => {
+      if (!checked) return new Set();
+      return new Set(filteredSeries.map((s) => s.id));
+    });
+  }
+
+  function toggleTag(tag: string) {
+    setSelectedTags((prev) => {
       const next = new Set(prev);
-      for (const s of filteredSeries) {
-        if (checked) next.add(s.id);
-        else next.delete(s.id);
-      }
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
       return next;
     });
   }
 
+  function clearTags() {
+    setSelectedTags(new Set());
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px] lg:grid-rows-[max-content_720px_max-content_max-content]">
         <div className="lg:row-start-1 lg:col-start-1">
           <FareKindSelect fareKind={fareKind} onChangeFareKind={setFareKind} />
         </div>
@@ -280,6 +316,10 @@ export default function FareComparison() {
           selectedCount={selectedCount}
           isLoading={!data && !error}
           error={error}
+          availableTags={availableTags}
+          selectedTags={selectedTags}
+          onToggleTag={toggleTag}
+          onClearTags={clearTags}
           onSetAllVisible={setAllVisible}
           onSetCompanyVisible={setCompanyVisible}
           onChangeSeries={changeSeries}

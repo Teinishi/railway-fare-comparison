@@ -19,7 +19,7 @@ export default function SelectedNotesPanel({
   return (
     <div
       className={
-        "w-full min-w-0 max-w-full rounded-2xl border border-zinc-200 bg-white p-4 " +
+        "w-full min-w-0 max-w-full rounded-2xl border border-zinc-200 bg-white p-3 " +
         (className ?? "")
       }
     >
@@ -55,7 +55,7 @@ export default function SelectedNotesPanel({
           {blocks.map((n) => (
             <div
               key={n.id}
-              className="min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 p-3"
+              className="min-w-0 rounded-md border border-zinc-200 bg-zinc-50 p-3"
             >
               <div className="flex items-center gap-2">
                 {n.color && <span

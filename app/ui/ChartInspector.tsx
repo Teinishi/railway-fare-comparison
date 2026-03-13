@@ -4,6 +4,7 @@ import { LuPin } from "react-icons/lu";
 import { useEffect, useMemo, useRef } from "react";
 
 type Props = {
+  className?: string,
   message: string;
   noValuesMessage: string;
   hoverValues: {
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function ChartInspector({
+  className,
   message,
   noValuesMessage,
   hoverValues,
@@ -55,7 +57,7 @@ export default function ChartInspector({
   }, [activeId]);
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+    <div className={"flex flex-col rounded-md border border-zinc-200 bg-white p-3 " + (className || "")}>
       <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="text-xs font-semibold text-zinc-900">
           インスペクタ
@@ -69,7 +71,7 @@ export default function ChartInspector({
           {message}
         </div>
       </div>
-      <div className="relative flex max-h-40 flex-col gap-1 overflow-auto pr-1">
+      <div className="grow min-h-0 relative flex flex-col gap-1 overflow-auto pr-1">
         {sortedValues.map((v) => (
           <button
             type="button"

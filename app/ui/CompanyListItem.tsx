@@ -4,6 +4,7 @@ import CompanyHeader from "./CompanyHeader";
 import RouteListItem from "./RouteListItem";
 
 type Props = {
+  className?: string;
   companyKey: string;
   companyName: string;
   items: {
@@ -18,7 +19,7 @@ type Props = {
   onChangeRoute: (checked: boolean, id: string) => void;
 };
 
-export default function CompanyListItem({ companyKey, companyName, items, selectedIds, onChangeCompany, onChangeRoute }: Props) {
+export default function CompanyListItem({ className, companyKey, companyName, items, selectedIds, onChangeCompany, onChangeRoute }: Props) {
   let selectedItemCount = 0;
   items.forEach(v => {
     if (selectedIds.has(v.id)) selectedItemCount++;
@@ -28,6 +29,7 @@ export default function CompanyListItem({ companyKey, companyName, items, select
     const theTable = items[0];
     return (
       <RouteListItem
+        className={className}
         checked={selectedIds.has(theTable.id)}
         onChange={(checked) => onChangeRoute(checked, theTable.id)}
         color={theTable.color}
@@ -36,7 +38,7 @@ export default function CompanyListItem({ companyKey, companyName, items, select
     );
   } else {
     return (
-      <div>
+      <div className={className}>
         <CompanyHeader
           companyKey={companyKey}
           companyName={companyName}

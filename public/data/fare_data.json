@@ -748,7 +748,7 @@
             ]
         },
         {
-            "name": "流鉄",
+            "name": "流鉄 (きっぷのみ)",
             "tags": ["kanto", "heavyRail", "private"],
             "fareTables": [
                 {

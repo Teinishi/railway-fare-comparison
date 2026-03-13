@@ -1,15 +1,16 @@
 "use client";
 
 type Props = {
+  className?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   color: string;
   name: string;
 };
 
-export default function RouteListItem({ checked, onChange, color, name }: Props) {
+export default function RouteListItem({ className, checked, onChange, color, name }: Props) {
   return (
-    <label className="flex flex-1 cursor-pointer rounded-xl border border-zinc-200 bg-white p-2.5 hover:bg-zinc-50">
+    <label className={"flex flex-1 cursor-pointer rounded-xl border border-zinc-200 bg-white p-2.5 hover:bg-zinc-50 " + (className || "")}>
       <div className="grid w-full grid-cols-[16px_10px_1fr] items-center gap-2">
         <input
           type="checkbox"
