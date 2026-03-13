@@ -15,6 +15,9 @@ import {
 } from "./stepFareChartMath";
 import ChartInspector from "./ChartInspector";
 
+const DEFAULT_X_RANGE_KM = 50;
+const HOVER_PICK_MAX_DY_PX = 20;
+
 type Series = {
   id: string;
   companyName: string;
@@ -35,7 +38,6 @@ export default function StepFareChart({ fareKind, series }: Props) {
   const [hoverKm, setHoverKm] = useState<number | null>(null);
   const [hoverSeriesId, setHoverSeriesId] = useState<string | null>(null);
   const [pinnedSeriesId, setPinnedSeriesId] = useState<string | null>(null);
-  const DEFAULT_X_RANGE_KM = 50;
   const [zoomX, setZoomX] = useState<{ minKm: number; maxKm: number }>(() => ({
     minKm: 0,
     maxKm: DEFAULT_X_RANGE_KM,
@@ -227,46 +229,60 @@ export default function StepFareChart({ fareKind, series }: Props) {
     return [...series.slice(0, idx), ...series.slice(idx + 1), series[idx]];
   }, [activeSeriesId, series]);
 
-  function onMouseMove(e: MouseEvent<SVGSVGElement>) {
-    if (interaction) return;
-    const p = clientToSvg(e.clientX, e.clientY);
-    if (!p) return;
-    const x = p.x;
-    const y = p.y;
-
+  function classifyPoint(x: number, y: number) {
     const inPlotArea =
       x >= plotRect.x &&
       x <= plotRect.right &&
       y >= plotRect.y &&
       y <= plotRect.bottom;
-    const inXAxisBand =
-      x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+    const inXAxisBand = x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+    const zone: "none" | "plot" | "xband" = inXAxisBand ? "xband" : inPlotArea ? "plot" : "none";
+    return { inPlotArea, inXAxisBand, zone };
+  }
 
-    setHoverZone(inXAxisBand ? "xband" : inPlotArea ? "plot" : "none");
+  function kmAtSvgX(x: number) {
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
-    const km = fromX(xInner);
+    return fromX(xInner);
+  }
+
+  function pickNearestSeriesId(km: number, ySvg: number) {
+    let bestId: string | null = null;
+    let bestDist = Infinity;
+    for (const s of series) {
+      const yen = fareAtDistance(s.fares, km, fareKind);
+      if (yen === null) continue;
+      const yy = toY(yen);
+      const d = Math.abs(yy - ySvg);
+      if (d < bestDist) {
+        bestDist = d;
+        bestId = s.id;
+      }
+    }
+    if (bestDist > HOVER_PICK_MAX_DY_PX) return null;
+    return bestId;
+  }
+
+  function applyHoverFromPoint(p: { x: number; y: number }, opts?: { forceZone?: "plot" | "xband" | "none" }) {
+    const { zone } = classifyPoint(p.x, p.y);
+    const effectiveZone = opts?.forceZone ?? zone;
+
+    setHoverZone(effectiveZone);
+    const km = kmAtSvgX(p.x);
     setHoverKm(km);
 
-    if (!pinnedId && inPlotArea) {
-      let bestId: string | null = null;
-      let bestDist = Infinity;
-      for (const s of series) {
-        const yen = fareAtDistance(s.fares, km, fareKind);
-        if (yen === null) continue;
-        const yy = toY(yen);
-        const d = Math.abs(yy - y);
-        if (d < bestDist) {
-          bestDist = d;
-          bestId = s.id;
-        }
-      }
-      if (bestDist > 20) {
-        bestId = null;
-      }
-      setHoverSeriesId(bestId);
+    if (!pinnedId && effectiveZone === "plot") {
+      setHoverSeriesId(pickNearestSeriesId(km, p.y));
     } else if (!pinnedId) {
       setHoverSeriesId(null);
     }
+  }
+
+  function onMouseMove(e: MouseEvent<SVGSVGElement>) {
+    if (interaction) return;
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+
+    applyHoverFromPoint(p);
   }
 
   function onMouseLeave() {
@@ -325,13 +341,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
     const y = p.y;
     const xInner = clamp(x, dims.m.l, dims.w - dims.m.r);
 
-    const inPlotArea =
-      x >= plotRect.x &&
-      x <= plotRect.right &&
-      y >= plotRect.y &&
-      y <= plotRect.bottom;
-    const inXAxisBand =
-      x >= plotRect.x && x <= plotRect.right && y >= plotRect.bottom;
+    const { inPlotArea, inXAxisBand } = classifyPoint(x, y);
 
     // Assignments:
     // - Shift+drag => zoom select (anywhere)
@@ -343,8 +353,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
 
     // Touch convenience: when not zoomed, a tap on the plot area sets the inspector target.
     if (e.pointerType === "touch" && wantsPan && !canPan) {
-      setHoverZone("plot");
-      setHoverKm(fromX(xInner));
+      applyHoverFromPoint(p, { forceZone: "plot" });
       e.preventDefault();
       return;
     }
@@ -506,8 +515,8 @@ export default function StepFareChart({ fareKind, series }: Props) {
     // Touch convenience: a tap after a pan gesture updates the inspector target.
     if (e.pointerType === "touch" && kind === "pan") {
       if (Math.abs(endPx - startPx) < 8) {
-        setHoverZone("plot");
-        setHoverKm(fromX(endPx));
+        const p = clientToSvg(e.clientX, e.clientY);
+        if (p) applyHoverFromPoint(p, { forceZone: "plot" });
       }
     }
     e.preventDefault();
@@ -564,6 +573,7 @@ export default function StepFareChart({ fareKind, series }: Props) {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="text-sm font-semibold text-zinc-900">運賃グラフ</div>
         <div className="text-xs text-zinc-600">
+          { JSON.stringify(baseExtent) }
           横軸: 距離(km) / 縦軸: 金額(円)
         </div>
       </div>
