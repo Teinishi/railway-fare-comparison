@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { LuTriangleAlert } from "react-icons/lu";
 import StepFareChart from "./StepFareChart";
 import SelectedNotesPanel, { type NoteBlock } from "./SelectedNotesPanel";
 import FareKindSelect from "./FareKindSelect";
@@ -29,6 +30,7 @@ type Company = {
 };
 
 type FareData = {
+  lastUpdated?: string;
   companies: Company[];
 };
 
@@ -71,8 +73,31 @@ function normalizeFareData(raw: unknown): FareData {
   return raw as FareData;
 }
 
+function parseYmd(ymd: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(d)) return null;
+  if (mo < 1 || mo > 12) return null;
+  if (d < 1 || d > 31) return null;
+  return { y, mo, d };
+}
+
+function parseYmdToUtcMs(ymd: string) {
+  const p = parseYmd(ymd);
+  if (!p) return null;
+  return Date.UTC(p.y, p.mo - 1, p.d);
+}
+
+function formatYmdToJaYearMonth(ymd: string) {
+  const p = parseYmd(ymd);
+  if (!p) return null;
+  return `${p.y}年${p.mo}月`;
+}
+
 function defaultSelectedIds(series: Series[]) {
-  // Show a few by default to avoid an empty chart.
   return new Set(series
     .filter(s => s.companyName === "JR東日本" && ["山手線内", "電車特定区間", "幹線"].some(v => s.tableName?.includes(v)))
     .map(s => s.id)
@@ -227,6 +252,24 @@ export default function FareComparison() {
     return blocks;
   }, [data, selectedSeries]);
 
+  const staleDataNotice = useMemo(() => {
+    const last = data?.lastUpdated;
+    if (!last) return null;
+    const ms = parseYmdToUtcMs(last);
+    if (ms === null) {
+      return `[開発用] データの最終更新日(lastUpdated)の形式が不正です: ${last}`;
+    }
+    const days = (Date.now() - ms) / (1000 * 60 * 60 * 24);
+    if (days <= 365) return null;
+    return `データの最終更新から1年以上経過しています。運賃改定の可能性があるため、最新情報を確認してください。`;
+  }, [data?.lastUpdated]);
+
+  const dataUpdatedYearMonth = useMemo(() => {
+    const last = data?.lastUpdated;
+    if (!last) return null;
+    return formatYmdToJaYearMonth(last);
+  }, [data?.lastUpdated]);
+
   const grouped = useMemo(() => {
     const map = new Map<string, { companyName: string; items: Series[] }>();
     for (const s of filteredSeries) {
@@ -288,6 +331,12 @@ export default function FareComparison() {
 
   return (
     <div className="flex flex-col gap-6">
+      {staleDataNotice ? (
+        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 wrap-break-word">
+          <LuTriangleAlert size={20} /> {staleDataNotice}
+        </div>
+      ) : null}
+
       <div className="grid gap-6 lg:grid-cols-[1fr_340px] lg:grid-rows-[max-content_720px_max-content_max-content]">
         <div className="lg:row-start-1 lg:col-start-1">
           <FareKindSelect fareKind={fareKind} onChangeFareKind={setFareKind} />
@@ -337,7 +386,7 @@ export default function FareComparison() {
               営業キロに基づく大人片道普通旅客運賃を表示しています。加算運賃・特例・乗継割引などは別途考慮が必要です。
             </li>
             <li>
-              2026年3月時点の情報です。運賃改定などにより最新の情報でない場合があります。
+              {dataUpdatedYearMonth ?? "[更新日不明]"}時点の情報です。運賃改定などにより最新の情報でない場合があります。
             </li>
             <li>
               実際の運賃は各社の最新の運賃表や経路に従って確認してください。
