@@ -28,7 +28,6 @@ export default function ChartInspector({
   onHoverId,
   onTogglePin,
 }: Props) {
-  const listRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLButtonElement | null>>(new Map());
 
   const { sortedValues, isSorting } = useMemo(() => {
@@ -49,27 +48,10 @@ export default function ChartInspector({
 
   useEffect(() => {
     if (!activeId) return;
-    const list = listRef.current;
-    if (!list) return;
     const el = itemRefs.current.get(activeId);
     if (!el) return;
 
-    // Keep scrolling inside the inspector list (avoid scrolling the page).
-    const pad = 8;
-    const listRect = list.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-
-    // Position of the element within the scroll content (not offsetParent-dependent).
-    const top = elRect.top - listRect.top + list.scrollTop;
-    const bottom = top + elRect.height;
-    const viewTop = list.scrollTop;
-    const viewBottom = viewTop + list.clientHeight;
-
-    if (top < viewTop + pad) {
-      list.scrollTop = Math.max(0, top - pad);
-    } else if (bottom > viewBottom - pad) {
-      list.scrollTop = Math.max(0, bottom - list.clientHeight + pad);
-    }
+    el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
   }, [activeId]);
 
   return (
@@ -87,10 +69,7 @@ export default function ChartInspector({
           {message}
         </div>
       </div>
-      <div
-        ref={listRef}
-        className="relative flex max-h-40 flex-col gap-1 overflow-auto pr-1"
-      >
+      <div className="relative flex max-h-40 flex-col gap-1 overflow-auto pr-1">
         {sortedValues.map((v) => (
           <button
             type="button"
